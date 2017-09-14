@@ -1,0 +1,42 @@
+/* color scheme
+black: #000000
+dark blue: #2F4E6F
+med blue: #98B1C4
+light blue: #C8D7E3
+orange: #E15119
+grey: #CCCCCC
+*/
+.topnav {
+    background-color: #000000;
+    /*padding: 10px 0px;*/
+}
+.card {
+  margin: 10px 0px;
+}
+/* Style the links inside the navigation bar */
+.topnav a {
+    color: white;
+    text-align: center;
+    padding: 0px 10px;
+    text-decoration: none;
+    font-size: 17px;
+
+}
+
+.storyContainer {
+  margin: 0px 0px;
+}
+.headerList li{
+  display:inline;
+  list-style: none;
+}
+
+.background {
+  height: 100vh;
+}
+.foreground {
+  background-color: white;
+}
+#aboutList {
+  list-style-type: none;
+}

@@ -1,0 +1,14 @@
+/node_modules
+
+/dist
+/tmp
+/out-tsc
+
+*.sublime-workspace
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+
