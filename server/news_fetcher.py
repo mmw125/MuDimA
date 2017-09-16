@@ -1,7 +1,8 @@
+import newspaper
 import requests
 
-newsapi_url = "http://beta.newsapi.org/v2/"
-api_key = "25a1ccdea267479c95010aa442e376e5"
+news_api_url = "http://beta.newsapi.org/v2/"
+news_api_key = "25a1ccdea267479c95010aa442e376e5"
 
 
 class Article:
@@ -13,6 +14,7 @@ class Article:
         self._publishedAt = article.get("publishedAt")
         self._source = article.get("source")
         self._urlToImage = article.get("urlToImage")
+        self._text = None
 
     def get_description(self):
         return self._description
@@ -35,8 +37,17 @@ class Article:
     def get_url_to_image(self):
         return self._urlToImage
 
+    def get_text(self):
+        if self._text is None:
+            article = newspaper.Article(self.get_url())
+            article.download()
+            article.parse()
+            self._text = article.text
+        return self._text
+
+
     def __str__(self):
-        return " ".join((self._title, self._url))
+        return " ".join((self._title, self._url)).encode("utf-8")
 
 
 class Source:
@@ -71,7 +82,7 @@ class Source:
         return self._country
 
     def __str__(self):
-        return " ".join((self._name, self._url))
+        return " ".join((self._name, self._url)).encode("utf-8")
 
 
 class NewsApiError(Exception):
@@ -90,7 +101,7 @@ def _parse_response(response):
 def _build_url(endpoint, params=None):
     if params is None:
         params = dict()
-    params["apiKey"] = api_key
+    params["apiKey"] = news_api_key
     param_list = []
     for key, value in params.items():
         if not value:
@@ -98,7 +109,7 @@ def _build_url(endpoint, params=None):
         if isinstance(value, (list, tuple)):
             value = ','.join(value)
         param_list.append(str(key) + "=" + value)
-    return newsapi_url + endpoint + "?" + "&".join(param_list)
+    return news_api_url + endpoint + "?" + "&".join(param_list)
 
 
 def get_top_headlines(sources=list(), q=list(), category="", language="en", country=""):
@@ -121,7 +132,16 @@ def get_sources(language="", category="", country=""):
     return _parse_response(response)
 
 if __name__ == "__main__":
-    for article in get_top_headlines():
+    articles = get_top_headlines()
+    for article in articles[:5]:
         print(article)
-    for source in get_sources():
+    for source in get_sources()[:5]:
         print(source)
+    print articles[0].get_url()
+    print articles[0].get_text()
+    print "-----------------"
+    print articles[1].get_url()
+    print articles[1].get_text()
+    print "-----------------"
+    print articles[2].get_url()
+    print articles[2].get_text()
