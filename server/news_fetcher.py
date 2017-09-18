@@ -7,47 +7,48 @@ news_api_key = "25a1ccdea267479c95010aa442e376e5"
 
 class Article:
     def __init__(self, article):
-        self._description = article.get("description")
-        self._title = article.get("title")
-        self._url = article.get("url")
-        self._author = article.get("author")
-        self._publishedAt = article.get("publishedAt")
-        self._source = article.get("source")
-        self._urlToImage = article.get("urlToImage")
-        self._text = None
+        self.description = article.get("description")
+        self.title = article.get("title")
+        self.url = article.get("url")
+        self.author = article.get("author")
+        self.publishedAt = article.get("publishedAt")
+        self.source = article.get("source")
+        self.urlToImage = article.get("urlToImage")
+        self.text = None
 
     def get_description(self):
-        return self._description
+        return self.description
 
     def get_title(self):
-        return self._title
+        return self.title
 
     def get_url(self):
-        return self._url
+        return self.url
 
     def get_author(self):
-        return self._author
+        return self.author
 
     def get_published_at(self):
-        return self._publishedAt
+        return self.publishedAt
 
     def get_source(self):
-        return self._source
+        return self.source
 
     def get_url_to_image(self):
-        return self._urlToImage
+        return self.urlToImage
 
     def get_text(self):
-        if self._text is None:
+        if self.text is None:
             article = newspaper.Article(self.get_url())
             article.download()
             article.parse()
-            self._text = article.text
-        return self._text
+            article.nlp()
+            self.text = article.text
+        return self.text
 
 
     def __str__(self):
-        return " ".join((self._title, self._url)).encode("utf-8")
+        return " ".join((self.title, self.url)).encode("utf-8")
 
 
 class Source:
