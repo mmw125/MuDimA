@@ -31,4 +31,5 @@ def get_stories_for_topic():
     topic_id = request.args.get("topic_id")
     return json.dumps(database_reader.get_stories_for_topic(topic_id))
 
-if __name__ == "__main__": app.run(host="localhost", port=80)
+if __name__ == "__main__":
+    app.run(host="localhost", port=80)
