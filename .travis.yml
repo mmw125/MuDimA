@@ -1,0 +1,7 @@
+language: python
+python:
+  - "2.7"
+install:
+  - pip install -r server/environments/requirements.txt
+script:
+  - py.test
