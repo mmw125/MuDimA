@@ -1,5 +1,10 @@
 # IntelliJ project files
 .idea
-*.iml
 out
 gen
+
+# Compiled Python files
+*.pyc
+
+# Coverage output file
+.coverage

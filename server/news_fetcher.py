@@ -6,15 +6,21 @@ news_api_key = "25a1ccdea267479c95010aa442e376e5"
 
 
 class Article:
-    def __init__(self, article):
-        self.description = article.get("description")
-        self.title = article.get("title")
-        self.url = article.get("url")
-        self.author = article.get("author")
-        self.publishedAt = article.get("publishedAt")
-        self.source = article.get("source")
-        self.urlToImage = article.get("urlToImage")
-        self.text = None
+    @staticmethod
+    def create_from_dict(article_dict):
+        return Article(**article_dict)
+
+    def __init__(self, description="", title="", url="", author="",
+                 publishedAt="", source="", urlToImage="", text=None):
+        self.description = description
+        self.title = title
+        self.url = url
+        self.author = author
+        self.publishedAt = publishedAt
+        self.source = source
+        self.urlToImage = urlToImage
+        self.text = text
+        self.article = None
 
     def get_description(self):
         return self.description
@@ -37,15 +43,17 @@ class Article:
     def get_url_to_image(self):
         return self.urlToImage
 
+    def _init_article(self):
+        if self.article is None:
+            self.article = newspaper.Article(self.get_url())
+            self.article.download()
+            self.article.parse()
+
     def get_text(self):
         if self.text is None:
-            article = newspaper.Article(self.get_url())
-            article.download()
-            article.parse()
-            article.nlp()
-            self.text = article.text
+            self._init_article()
+            self.text = self.article.text
         return self.text
-
 
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")
@@ -95,7 +103,7 @@ def _parse_response(response):
     if response_dict.get("status") != "ok":
         raise NewsApiError(response_dict.get('message'))
     if response_dict.get("articles"):
-        return [Article(article) for article in response_dict.get("articles", [])]
+        return [Article.create_from_dict(article) for article in response_dict.get("articles", [])]
     return [Source(source) for source in response_dict.get("sources", [])]
 
 
