@@ -1,6 +1,7 @@
 import newspaper
 import requests
 
+default_language = "en"
 news_api_url = "http://beta.newsapi.org/v2/"
 news_api_key = "25a1ccdea267479c95010aa442e376e5"
 
@@ -121,21 +122,23 @@ def _build_url(endpoint, params=None):
     return news_api_url + endpoint + "?" + "&".join(param_list)
 
 
-def get_top_headlines(sources=list(), q=list(), category="", language="en", country=""):
+def get_top_headlines(sources=list(), q=list(), category="", language=default_language, country=""):
     url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
                                        "language": language, "country": country})
     response = requests.get(url)
     return _parse_response(response)
 
 
-def get_everything(sources=list(), domains=list(), q=list(), category="", language="en", sort_by="", page=0):
-    url = _build_url("everything", {"sources": sources, "domains": domains, "q": q, "category": category,
-                                       "language": language, "sortBy": sort_by, "page": page})
-    response = requests.get(url)
-    return _parse_response(response)
+# def get_everything(sources=list(), domains=list(), q=list(), category="",
+#                    language=default_language, sort_by="", page=0):
+#     url = _build_url("everything", {"sources": sources, "domains": domains, "q": q, "category": category,
+#                                     "language": language, "sortBy": sort_by, "page": page})
+#     print url
+#     response = requests.get(url)
+#     return _parse_response(response)
 
 
-def get_sources(language="", category="", country=""):
+def get_sources(language=default_language, category="", country=""):
     url = _build_url("sources", {"language": language, "category": category, "country": country})
     response = requests.get(url)
     return _parse_response(response)
@@ -146,11 +149,7 @@ if __name__ == "__main__":
         print(article)
     for source in get_sources()[:5]:
         print(source)
-    print articles[0].get_url()
-    print articles[0].get_text()
-    print "-----------------"
-    print articles[1].get_url()
-    print articles[1].get_text()
-    print "-----------------"
-    print articles[2].get_url()
-    print articles[2].get_text()
+    for article in articles[:10]:
+        article.get_url()
+        article.get_text()
+        print "-----------------"

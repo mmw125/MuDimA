@@ -8,3 +8,4 @@ gen
 
 # Coverage output file
 .coverage
+.cache*
