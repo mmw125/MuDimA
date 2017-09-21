@@ -1,3 +1,3 @@
 
-def classify_articles(article_list):
+def group_articles(article_list):
     pass
