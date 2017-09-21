@@ -1,16 +1,19 @@
-from flask import Flask, render_template, abort, request
+import classifier
+import database_reader
+import database_writer
 import json
 import news_fetcher
-import database_reader
+
+from flask import Flask, render_template, abort, request
 
 app = Flask(__name__)
 
 
 @app.route("/updateStories")
 def update_stories():
-    url = request.args.get("url")
-    text = news_fetcher.Article(url=url).get_text()
-    return json.dumps(text)
+    articles = news_fetcher.get_top_headlines()
+    grouped = classifier.group_articles(articles)
+    database_writer.write_topics_to_database(grouped)
 
 
 @app.route("/getSources")
