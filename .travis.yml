@@ -5,11 +5,10 @@ install:
   - pip install -r server/environments/requirements.txt
   - pip install -r server/environments/requirements-test.txt
   - pip install coveralls
+  - cd client
+  - npm install
+  - cd ..
 script:
   - py.test --cov=server
 after_success:
   - coveralls
-script:
-  - cd client
-  - npm install
-  - cd ..
