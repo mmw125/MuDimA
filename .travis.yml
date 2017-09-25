@@ -9,3 +9,7 @@ script:
   - py.test --cov=server
 after_success:
   - coveralls
+script:
+  - cd client
+  - npm install
+  - cd ..
