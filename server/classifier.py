@@ -20,14 +20,12 @@ class Grouping(object):
         return max(article.keyword_similarity(group_article) for group_article in self._articles)
 
     def __str__(self):
-        return str(article for article in self._articles)
+        return '\n'.join([str(art) for art in self._articles])
 
 
 def group_articles(article_list):
     """Group articles from the article list into Grouping objects."""
     article_list = [a if isinstance(a, news_fetcher.Article) else news_fetcher.Article(url=a) for a in article_list]
-    for article in article_list:
-        print article.get_keywords()
     groupings = []
     for article in article_list:
         best_grouping, best_grouping_similarity = None, 0
@@ -48,3 +46,13 @@ def group_articles(article_list):
         else:
             groupings.append(Grouping(article))
     return groupings
+
+if __name__ == "__main__":
+    articles = news_fetcher.get_top_headlines()
+    for article in articles:
+        print article
+    grouped = group_articles(articles)
+    for group in grouped:
+        print "---------------------------------------------------"
+        for article in group.get_articles():
+            print article
