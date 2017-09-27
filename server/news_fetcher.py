@@ -11,7 +11,7 @@ class Article:
     def create_from_dict(article_dict):
         return Article(**article_dict)
 
-    def __init__(self, description="", title="", url="", author="",
+    def __init__(self, url, description="", title="", author="",
                  publishedAt="", source="", urlToImage="", text=None):
         self.description = description
         self.title = title
@@ -22,6 +22,7 @@ class Article:
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
+        self.keywords = None
 
     def get_description(self):
         return self.description
@@ -55,6 +56,20 @@ class Article:
             self._init_article()
             self.text = self.article.text
         return self.text
+
+    def get_keywords(self):
+        if self.keywords is None:
+            self._init_article()
+            try:
+                self.article.nlp()
+            except newspaper.article.ArticleException:
+                pass
+            self.keywords = set(self.article.keywords)
+        return self.keywords
+
+    def keyword_similarity(self, other_article):
+        similar = float(len(other_article.get_keywords().intersection(self.get_keywords())))
+        return 0 if similar == 0 else similar / min([len(other_article.get_keywords()), len(self.get_keywords())])
 
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")
@@ -127,15 +142,6 @@ def get_top_headlines(sources=list(), q=list(), category="", language=default_la
                                        "language": language, "country": country})
     response = requests.get(url)
     return _parse_response(response)
-
-
-# def get_everything(sources=list(), domains=list(), q=list(), category="",
-#                    language=default_language, sort_by="", page=0):
-#     url = _build_url("everything", {"sources": sources, "domains": domains, "q": q, "category": category,
-#                                     "language": language, "sortBy": sort_by, "page": page})
-#     print url
-#     response = requests.get(url)
-#     return _parse_response(response)
 
 
 def get_sources(language=default_language, category="", country=""):
