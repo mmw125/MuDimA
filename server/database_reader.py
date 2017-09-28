@@ -1,11 +1,11 @@
 
 def get_topics():
-    return {"123abc": {"title": "Trump loses game of Tic-Tac-Toe",
+    return {"topics": [{"title": "Trump loses game of Tic-Tac-Toe",
                        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/"
-                                "Turnip_2622027.jpg/1200px-Turnip_2622027.jpg"},
-            "456dfg": {"title": "4 great exercises for asthma",
+                                "Turnip_2622027.jpg/1200px-Turnip_2622027.jpg", "id": "123abc"},
+            {"title": "4 great exercises for asthma",
                        "image": "https://i.pinimg.com/736x/d5/69/12/d569124e89a11274f7144a21ebc9c18f"
-                                "--funny-guys-funny-memes.jpg"}}
+                                "--funny-guys-funny-memes.jpg", "id": "456dfg"}]}
 
 
 def get_stories_for_topic(topic_id):

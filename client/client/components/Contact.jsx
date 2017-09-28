@@ -8,7 +8,7 @@ export default class Contact extends React.Component {
         <h1>Contact</h1>
         <p>Hey, my name is Andrew Marmon and I go to Virginia Tech (go hokies!).
           My passion is finding meaningful ways to use data. If you have any
-          questions about pulse and what it does contact me through one of the
+          questions about MuDimA and what it does contact me through one of the
           following ways: <br></br> email: drewmarmon@gmail.com <br></br> </p>
       </div>
       </div>
