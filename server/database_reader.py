@@ -12,5 +12,6 @@ def get_stories_for_topic(topic_id):
     if topic_id == "123abc":
         return ["example.com", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"]
     elif topic_id == "456dfg":
-        return ["http://inhealth.cnn.com/taking-control-of-your-asthma/4-great-exercises-for-asthma?did=t1_rss12", "example.com"]
+        return ["http://inhealth.cnn.com/taking-control-of-your-asthma/4-great-exercises-for-asthma?did=t1_rss12",
+                "example.com"]
     return []
