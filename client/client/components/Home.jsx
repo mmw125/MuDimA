@@ -25,13 +25,13 @@ export default class Home extends React.Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <h1>Hi</h1>
+        <h1>Temp</h1>
       );
     }
     return (
       <div className="row">
         <div className="col-md-12">
-          {this.state.topics.map(storyData => <StoryCard url={storyData.image} name={storyData.title} {...storyData} />)}
+          {this.state.topics.map(storyData => <StoryCard url={storyData.image} name={storyData.title} id={storyData.id} {...storyData} />)}
         </div>
       </div>
       );
