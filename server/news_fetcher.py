@@ -67,9 +67,13 @@ class Article:
             self.keywords = set(self.article.keywords)
         return self.keywords
 
+    def get_keyword_length(self):
+        """Gets the sum of all of the lengths of the keywords."""
+        return sum(len(i) for i in self.get_keywords())
+
     def keyword_similarity(self, other_article):
-        similar = float(len(other_article.get_keywords().intersection(self.get_keywords())))
-        return 0 if similar == 0 else similar / min([len(other_article.get_keywords()), len(self.get_keywords())])
+        similar = float(sum(len(title) for title in other_article.get_keywords().intersection(self.get_keywords())))
+        return 0 if similar == 0 else similar / min([other_article.get_keyword_length(), self.get_keyword_length()])
 
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")

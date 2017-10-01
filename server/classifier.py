@@ -48,7 +48,7 @@ def group_articles(article_list):
     return groupings
 
 if __name__ == "__main__":
-    articles = news_fetcher.get_top_headlines()
+    articles = news_fetcher.get_top_headlines()[:20]
     for article in articles:
         print article
     grouped = group_articles(articles)
