@@ -40,7 +40,6 @@ class Grouping(object):
                 best = article
         return best.get_title()
 
-
     def __str__(self):
         return '\n'.join([str(art) for art in self._articles])
 
