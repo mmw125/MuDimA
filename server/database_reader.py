@@ -1,14 +1,17 @@
 import MySQLdb
 import sys
+import dbconstants as dbconst
+
 
 def db_connect():
-    connection = MySQLdb.connect(host = dbconstants.HOST, user = dbconstants.USER, passwd = dbconstants.PASSWD, db = dbconstants.DB)
+    connection = MySQLdb.connect(host=dbconst.HOST, user=dbconst.USER, passwd=dbconst.PASSWD, db=dbconst.DB)
     cursor = connection.cursor()
     return connection, cursor
 
+
 def get_topics():
+    connection, cursor = db_connect()
     try:
-        connection, cursor = db_connect()
         cursor.execute("SELECT * FROM Topic;")
 
         return cursor.fetchall
@@ -33,7 +36,7 @@ def get_stories_for_topic(topic_id):
     try:
         connection, cursor = db_connect()
         cursor.execute(query)
-        cursor.execute("SELECT * FROM Article WHERE Topic_id = %s;", topic_id);
+        cursor.execute("SELECT * FROM Article WHERE Topic_id = %s;", topic_id)
 
         return cursor.fetchall
 
