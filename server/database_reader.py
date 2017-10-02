@@ -1,17 +1,20 @@
 
 def get_topics():
-    return {"topics": [{"title": "Trump loses game of Tic-Tac-Toe",
-                       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/"
-                                "Turnip_2622027.jpg/1200px-Turnip_2622027.jpg", "id": "123abc"},
-            {"title": "4 great exercises for asthma",
-                       "image": "https://i.pinimg.com/736x/d5/69/12/d569124e89a11274f7144a21ebc9c18f"
-                                "--funny-guys-funny-memes.jpg", "id": "456dfg"}]}
+    return {"topics": [{"title": "Stephen Paddock, Las Vegas Suspect, Was a Gambler, a Cipher, a 'Lone Wolf'",
+                       "image": "https://static01.nyt.com/images/2017/10/02/us/03Vegas-HP-slide-VRK0/"
+                                "03Vegas-HP-slide-VRK0-master768.jpg", "id": "123abc"},
+            {"title": "Facebook Says It Will Hire 1,000 People to Review Ads to Deter Russian Interference",
+                       "image": "http://www.telegraph.co.uk/content/dam/technology/2016/05/26/84898948-facebook-tech-"
+                                "xlarge_trans_NvBQzQNjv4BqFZ2mKB99NyfWHs4BvtAqLsS4XZFk3S07juafvYzyvW0.jpg",
+             "id": "456dfg"}]}
 
 
 def get_stories_for_topic(topic_id):
     if topic_id == "123abc":
-        return ["example.com", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"]
+        return ("https://www.nytimes.com/2017/10/02/us/stephen-paddock-vegas-shooter.html",
+                "https://www.cbsnews.com/news/las-vegas-shooting-stephen-paddock-what-we-know-about-shooter/",
+                "http://www.cnn.com/2017/10/02/us/las-vegas-attack-stephen-paddock-trnd/index.html")
     elif topic_id == "456dfg":
-        return ["http://inhealth.cnn.com/taking-control-of-your-asthma/4-great-exercises-for-asthma?did=t1_rss12",
-                "example.com"]
+        return ["http://fortune.com/2017/10/02/facebook-ads-russia/",
+                "https://www.rt.com/usa/405361-zuckerberg-apologizes-facebook-division/"]
     return []
