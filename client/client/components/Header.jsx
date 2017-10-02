@@ -4,7 +4,7 @@ export default class Header extends React.Component {
   render() {
     return (
       <nav className="navbar sticky-top navbar-toggleable-md navbar-light bg-faded">
-        <a className="navbar-brand" href="#">MuDiMa</a>
+        <a className="navbar-brand" href="#">MuDimA</a>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item">
