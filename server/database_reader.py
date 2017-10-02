@@ -4,8 +4,9 @@ def get_topics():
                        "image": "https://static01.nyt.com/images/2017/10/02/us/03Vegas-HP-slide-VRK0/"
                                 "03Vegas-HP-slide-VRK0-master768.jpg", "id": "123abc"},
             {"title": "Facebook Says It Will Hire 1,000 People to Review Ads to Deter Russian Interference",
-                       "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxJuXzAAJ7JEW-u6_EJM8Ok9f-"
-                                "dzpMYGzYnEAbA1NWAuWEPTTn89FPQXNL9mk8h5dkKERLmUDdPGM", "id": "456dfg"}]}
+                       "image": "http://www.telegraph.co.uk/content/dam/technology/2016/05/26/84898948-facebook-tech-"
+                                "xlarge_trans_NvBQzQNjv4BqFZ2mKB99NyfWHs4BvtAqLsS4XZFk3S07juafvYzyvW0.jpg",
+             "id": "456dfg"}]}
 
 
 def get_stories_for_topic(topic_id):
