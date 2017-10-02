@@ -19,6 +19,27 @@ class Grouping(object):
     def best_similarity(self, article):
         return max(article.keyword_similarity(group_article) for group_article in self._articles)
 
+    def get_title(self):
+        """Find the title that has the most in common with the other titles."""
+        if len(self._articles) == 1:
+            return self._articles[0]
+        best = None
+        best_similarity = 0
+        for article in self._articles:
+            article_set = set(article.get_title().split(' '))
+            similarities = []
+            for other in self._articles:
+                if article != other:
+                    other_set = set(other.get_title().split(' '))
+                    similar = float(len(other_set.intersection(article_set)))
+                    similar = 0 if similar == 0 else similar / min((len(article_set), len(other_set)))
+                    similarities.append(similar)
+            similarity = sum(similarities) / max(len(similarities), 1)
+            if similarity >= best_similarity:
+                best_similarity = similarity
+                best = article
+        return best.get_title()
+
     def __str__(self):
         return '\n'.join([str(art) for art in self._articles])
 
@@ -48,11 +69,12 @@ def group_articles(article_list):
     return groupings
 
 if __name__ == "__main__":
-    articles = news_fetcher.get_top_headlines()
+    articles = news_fetcher.get_top_headlines()[:20]
     for article in articles:
         print article
     grouped = group_articles(articles)
     for group in grouped:
         print "---------------------------------------------------"
+        print group.get_title()
         for article in group.get_articles():
             print article
