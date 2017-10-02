@@ -9,9 +9,9 @@ def db_connect():
 def get_topics():
     try:
         connection, cursor = db_connect()
-        cursor.execute("SELECT * FROM Topic;");
+        cursor.execute("SELECT * FROM Topic;")
 
-        return cursor.fetchall;
+        return cursor.fetchall
 
     except:
         print "Couldn't get topics"
@@ -32,11 +32,10 @@ def get_topics():
 def get_stories_for_topic(topic_id):
     try:
         connection, cursor = db_connect()
-        query = 
-        cursor.execute(query);
+        cursor.execute(query)
         cursor.execute("SELECT * FROM Article WHERE Topic_id = %s;", topic_id);
 
-        return cursor.fetchall;
+        return cursor.fetchall
 
     except:
         print "Couldn't get stories from topic"

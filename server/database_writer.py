@@ -1,8 +1,10 @@
 import dbconstants
+
 def db_connect():
     connection = MySQLdb.connect(host = dbconstants.HOST, user = dbconstants.USER, passwd = dbconstants.PASSWD, db = dbconstants.DB)
     cursor = connection.cursor()
     return connection, cursor
+
 
 def write_topics_to_database(topic_list):
     try:
@@ -19,5 +21,3 @@ def write_topics_to_database(topic_list):
     finally:
         cursor.close()
         connection.close()
-
-    #pass

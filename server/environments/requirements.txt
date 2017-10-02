@@ -1,3 +1,4 @@
 Flask
 requests
 newspaper
+MySQL-python

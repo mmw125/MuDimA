@@ -1,4 +1,4 @@
 HOST = "localhost"
 USER = "root"
-PASSWD = "mudima"
-DB = "mudimadb"
+PASSWD = "root"
+DB = "mudima_db"
