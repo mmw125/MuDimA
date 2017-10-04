@@ -9,8 +9,10 @@ def get_topics():
 
 def get_stories_for_topic(topic_id):
     with utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT * FROM article WHERE Topic_id=?", topic_id)
-        return cursor.fetchall()
+        cursor.execute("SELECT * FROM topic WHERE id=?", (topic_id,))
+        title = cursor.fetchone()[0]
+        cursor.execute("SELECT * FROM article WHERE topic_id=?", (topic_id,))
+        return {"title": title, "articles": [(item[0], item[1]) for item in cursor.fetchall()]}
 
 if __name__ == "__main__":
     print get_topics()
