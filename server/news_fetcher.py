@@ -15,18 +15,12 @@ class Article:
 
     def __init__(self, url, description="", title="", author="",
                  publishedAt="", source="", urlToImage="", text=None):
-        assert isinstance(description, (str, unicode)) or description is None
         self.description = description
-        assert isinstance(title, (str, unicode))
         self.title = title
-        assert isinstance(url, (str, unicode)) or url is None
         self.url = url
-        assert isinstance(author, (str, unicode)) or author is None
         self.author = author
-        assert isinstance(publishedAt, (str, unicode)) or publishedAt is None
         self.publishedAt = publishedAt
         self.source = source
-        assert isinstance(urlToImage, (str, unicode)) or urlToImage is None
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
