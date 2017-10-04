@@ -1,3 +1,5 @@
+import classifier
+import database_writer
 import newspaper
 import requests
 
@@ -13,12 +15,18 @@ class Article:
 
     def __init__(self, url, description="", title="", author="",
                  publishedAt="", source="", urlToImage="", text=None):
+        assert isinstance(description, (str, unicode)) or description is None
         self.description = description
+        assert isinstance(title, (str, unicode))
         self.title = title
+        assert isinstance(url, (str, unicode)) or url is None
         self.url = url
+        assert isinstance(author, (str, unicode)) or author is None
         self.author = author
+        assert isinstance(publishedAt, (str, unicode)) or publishedAt is None
         self.publishedAt = publishedAt
         self.source = source
+        assert isinstance(urlToImage, (str, unicode)) or urlToImage is None
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
@@ -153,13 +161,23 @@ def get_sources(language=default_language, category="", country=""):
     response = requests.get(url)
     return _parse_response(response)
 
+
+def update_database():
+    articles = get_top_headlines()[:1]
+    grouped = classifier.group_articles(articles)
+    database_writer.write_topics_to_database(grouped)
+
 if __name__ == "__main__":
-    articles = get_top_headlines()
-    for article in articles[:5]:
-        print(article)
-    for source in get_sources()[:5]:
-        print(source)
-    for article in articles[:10]:
-        article.get_url()
-        article.get_text()
-        print "-----------------"
+    import database_utils
+    with database_utils.DatabaseConnection(refresh=True):
+        pass  # refresh the database
+    update_database()
+    #articles = get_top_headlines()
+    #for article in articles[:5]:
+    #    print(article)
+    # for source in get_sources()[:5]:
+    #     print(source)
+    # for article in articles[:10]:
+    #     article.get_url()
+    #     article.get_text()
+    #     print "-----------------"

@@ -1,5 +1,7 @@
-
+import classifier
 import database_reader
+import database_writer
+import news_fetcher
 import unittest
 
 
