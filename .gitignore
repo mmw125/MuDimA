@@ -11,4 +11,4 @@ gen
 .cache*
 
 # Database file
-*.db
+mudima.db
