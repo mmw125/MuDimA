@@ -14,7 +14,7 @@ class Article:
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="",
-                 publishedAt="", source="", urlToImage="", text=None):
+                 publishedAt="", source={}, urlToImage="", text=None):
         self.description = description
         self.title = title
         self.url = url
@@ -42,7 +42,7 @@ class Article:
         return self.publishedAt
 
     def get_source(self):
-        return self.source
+        return Source(self.source)
 
     def get_url_to_image(self):
         return self.urlToImage
