@@ -49,9 +49,11 @@ def get_stories_for_topic(topic_id):
 
     '''
     if topic_id == "123abc":
-        return "example.com", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        return ("https://www.nytimes.com/2017/10/02/us/stephen-paddock-vegas-shooter.html",
+                "https://www.cbsnews.com/news/las-vegas-shooting-stephen-paddock-what-we-know-about-shooter/",
+                "http://www.cnn.com/2017/10/02/us/las-vegas-attack-stephen-paddock-trnd/index.html")
     elif topic_id == "456dfg":
-        return ("http://inhealth.cnn.com/taking-control-of-your-asthma/4-great-exercises-for-asthma?did=t1_rss12",
-                "example.com")
+        return ["http://fortune.com/2017/10/02/facebook-ads-russia/",
+                "https://www.rt.com/usa/405361-zuckerberg-apologizes-facebook-division/"]
     return []
     '''
