@@ -15,7 +15,7 @@ export default class Home extends React.Component {
       .then((responseJson) => {
         this.setState({
           isLoading: false,
-          topics: responseJson.topics
+          topics: responseJson
         })})
       .catch((error) => { console.error(error); });
   }
