@@ -59,6 +59,7 @@ class Grouping(object):
 
 def group_articles(article_list):
     """Group articles from the article list into Grouping objects."""
+    article_list = [news_fetcher.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
     groupings = []
     for article in article_list:
         best_grouping, best_grouping_similarity = None, 0
