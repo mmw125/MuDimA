@@ -40,7 +40,13 @@ class Grouping(object):
             if similarity >= best_similarity:
                 best_similarity = similarity
                 best = article
-        return best.get_title().get_title()
+        return best.get_title()
+
+    def get_image_url(self):
+        for article in self._articles:
+            if article.get_url_to_image():
+                return article.get_url_to_image()
+        return None
 
     def get_uuid(self):
         if self._uuid is None:
