@@ -9,3 +9,6 @@ gen
 # Coverage output file
 .coverage
 .cache*
+
+# Database file
+mudima.db

@@ -1,3 +1,5 @@
+import classifier
+import database_writer
 import newspaper
 import requests
 
@@ -67,9 +69,13 @@ class Article:
             self.keywords = set(self.article.keywords)
         return self.keywords
 
+    def get_keyword_length(self):
+        """Gets the sum of all of the lengths of the keywords."""
+        return sum(len(i) for i in self.get_keywords())
+
     def keyword_similarity(self, other_article):
-        similar = float(len(other_article.get_keywords().intersection(self.get_keywords())))
-        return 0 if similar == 0 else similar / min([len(other_article.get_keywords()), len(self.get_keywords())])
+        similar = float(sum(len(title) for title in other_article.get_keywords().intersection(self.get_keywords())))
+        return 0 if similar == 0 else similar / min([other_article.get_keyword_length(), self.get_keyword_length()])
 
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")
@@ -149,13 +155,16 @@ def get_sources(language=default_language, category="", country=""):
     response = requests.get(url)
     return _parse_response(response)
 
+
+def update_database():
+    articles = get_top_headlines()[:100]
+    grouped = classifier.group_articles(articles)
+    database_writer.write_topics_to_database(grouped)
+
 if __name__ == "__main__":
-    articles = get_top_headlines()
-    for article in articles[:5]:
-        print(article)
-    for source in get_sources()[:5]:
-        print(source)
-    for article in articles[:10]:
-        article.get_url()
-        article.get_text()
-        print "-----------------"
+    import database_utils
+    with database_utils.DatabaseConnection(refresh=True):
+        pass  # refresh the database
+    update_database()
+    import database_reader
+    print database_reader.get_topics()
