@@ -61,12 +61,16 @@ class Article:
 
     def get_keywords(self):
         if self.keywords is None:
+            print self.get_url()
             self._init_article()
-            try:
-                self.article.nlp()
-            except newspaper.article.ArticleException:
-                pass
-            self.keywords = set(self.article.keywords)
+            if self.article.text:
+                try:
+                    self.article.nlp()
+                    self.keywords = set(self.article.keywords)
+                except newspaper.article.ArticleException:
+                    self.keywords = set()
+            else:
+                self.keywords = set()
         return self.keywords
 
     def get_keyword_length(self):

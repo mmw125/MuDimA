@@ -3,8 +3,9 @@ import database_utils as utils
 
 def get_topics():
     with utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, id, image_url FROM topic")
-        return [{"title": item[0], "id": item[1], "image": item[2]} for item in cursor.fetchall()]
+        cursor.execute("SELECT topic.name, topic.id, topic.image_url, count(*) FROM article, topic "
+                       "WHERE article.topic_id = topic.id GROUP BY topic.id;")
+        return [{"title": item[0], "id": item[1], "image": item[2], "count": item[3]} for item in cursor.fetchall()]
 
 
 def get_stories_for_topic(topic_id):
