@@ -1,12 +1,18 @@
 import sqlite3
 import os
 
-DB_NAME = "mudima.db"
+
+def database_name():
+    return "mudima.db"
+
+
+def database_path(name):
+    return os.path.join(os.path.dirname(os.path.dirname(__file__)), name)
 
 
 class DatabaseConnection:
-    def __init__(self, path=DB_NAME, refresh=False):
-        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), path)
+    def __init__(self, path=None, refresh=False):
+        db_path = database_path(path if path else database_name())
         exists = os.path.exists(db_path)
         if exists and refresh:
             os.remove(db_path)
