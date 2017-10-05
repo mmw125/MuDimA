@@ -37,6 +37,16 @@ class RigerousClassifierTest(unittest.TestCase):
                                "-in-and-out-hotel-room-ahead-premeditated-attack.html",
                                "http://www.chicagotribune.com/news/columnists/kass/ct-met-las-vegas-"
                                "shooting-kass-1004-story.html"]
+
     def test_classifier_grouping(self):
         self.concat_articles = self.hurricane_harvy_urls + self.tom_petty_urls + self.las_vegas_urls
         self.assertEqual(3, len(classifier.group_articles(self.concat_articles)))
+
+
+class FindURLErrorTest(unittest.TestCase):
+    def setUp(self):
+        self.url = ["https://www.techwyse.com/blog/online-innovation/introducing-the-world's"
+                    "-first-lorem-ipsum-website-checker/"]
+
+    def test_parsing_issue(self) :
+        self.assertEqual(1, len(classifier.group_articles(self.url)))
