@@ -1,3 +1,5 @@
+import classifier
+import database_writer
 import newspaper
 import requests
 
@@ -12,7 +14,7 @@ class Article:
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="",
-                 publishedAt="", source="", urlToImage="", text=None):
+                 publishedAt="", source={}, urlToImage="", text=None):
         self.description = description
         self.title = title
         self.url = url
@@ -40,7 +42,7 @@ class Article:
         return self.publishedAt
 
     def get_source(self):
-        return self.source
+        return Source(self.source)
 
     def get_url_to_image(self):
         return self.urlToImage
@@ -153,13 +155,16 @@ def get_sources(language=default_language, category="", country=""):
     response = requests.get(url)
     return _parse_response(response)
 
+
+def update_database():
+    articles = get_top_headlines()[:100]
+    grouped = classifier.group_articles(articles)
+    database_writer.write_topics_to_database(grouped)
+
 if __name__ == "__main__":
-    articles = get_top_headlines()
-    for article in articles[:5]:
-        print(article)
-    for source in get_sources()[:5]:
-        print(source)
-    for article in articles[:10]:
-        article.get_url()
-        article.get_text()
-        print "-----------------"
+    import database_utils
+    with database_utils.DatabaseConnection(refresh=True):
+        pass  # refresh the database
+    update_database()
+    import database_reader
+    print database_reader.get_topics()

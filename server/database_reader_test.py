@@ -1,12 +1,13 @@
-
+import classifier
 import database_reader
-import unittest
+import database_writer
+import test_utils
 
 
-class DatabaseReaderTest(unittest.TestCase):
-    def test_get_topics(self):
-        self.assertEqual({"123abc", "456dfg"}, set([i['id'] for i in database_reader.get_topics()['topics']]))
-
-    def test_get_stories_for_topic(self):
-        for val in database_reader.get_topics()['topics']:
-            self.assertTrue(database_reader.get_stories_for_topic(val['id']))
+class DatabaseReaderTest(test_utils.DatabaseTest):
+    def test_write_read_similar(self):
+        groups = classifier.group_articles(test_utils.SIMILAR_URLS)
+        database_writer.write_topics_to_database(groups)
+        stories = database_reader.get_stories_for_topic(groups[0].get_uuid())
+        stories = set(a[1] for a in stories.get('articles'))
+        self.assertEqual(stories, set(test_utils.SIMILAR_URLS))

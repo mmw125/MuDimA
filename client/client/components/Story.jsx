@@ -15,7 +15,8 @@ export default class Story extends React.Component {
         console.log(responseJson);
         this.setState({
           isLoading: false,
-          source: responseJson
+          source: responseJson.articles,
+          title: responseJson.title
         })})
       .catch((error) => { console.error(error); });
   }
@@ -25,14 +26,14 @@ export default class Story extends React.Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <h1>Temp</h1>
+        <h1></h1>
       );
     }
     return (
       <div className="row">
-        <h1>Put information here about story:</h1>
+          <h1>{this.state.title}</h1>
         <ul>
-        {this.state.source.map(storyData => <li><a href={storyData}>{storyData}</a></li>)}
+        {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
         </ul>
       </div>
 
