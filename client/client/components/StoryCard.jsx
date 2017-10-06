@@ -8,6 +8,7 @@ export default class StoryCard extends React.Component {
         <img className="card-img" src={this.props.url} alt="Card image"></img>
         <div className="card-img-overlay">
           <h4 className="card-title">{this.props.name}</h4>
+          <p class="card-text">{this.props.count} article{this.props.count > 1 && "s"}</p>
         </div>
       </div>
     </a>);
