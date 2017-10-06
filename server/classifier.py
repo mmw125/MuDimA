@@ -8,6 +8,8 @@ def group_articles(article_list):
     article_list = [database_utils.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
     groupings = []
     for article in article_list:
+        if not article.get_keywords():
+            continue  # Skip the article if the keywords cannot be gotten from it.
         best_grouping, best_grouping_similarity = None, 0
 
         # Need to make a shallow copy of list for the possibility of combining two of the items in the list.
