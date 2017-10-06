@@ -1,6 +1,4 @@
-import classifier
 import database_reader
-import database_writer
 import json
 import news_fetcher
 

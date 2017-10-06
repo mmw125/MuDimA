@@ -165,7 +165,7 @@ def update_database():
     grouped = classifier.group_articles(articles)
     database_writer.write_topics_to_database(grouped)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import database_utils
     with database_utils.DatabaseConnection(refresh=True):
         pass  # refresh the database

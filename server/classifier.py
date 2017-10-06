@@ -81,7 +81,7 @@ def group_articles(article_list):
             groupings.append(Grouping(article))
     return groupings
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     articles = news_fetcher.get_top_headlines()[:20]
     for a in articles:
         print a

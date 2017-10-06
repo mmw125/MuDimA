@@ -16,7 +16,7 @@ def get_stories_for_topic(topic_id):
         cursor.execute("SELECT * FROM article WHERE topic_id=?", (topic_id,))
         return {"title": title, "articles": [(item[0], item[1]) for item in cursor.fetchall()]}
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     print get_topics()
     for topic in get_topics():
         print get_stories_for_topic(topic.get("id"))
