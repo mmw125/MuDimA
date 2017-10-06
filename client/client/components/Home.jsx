@@ -25,7 +25,7 @@ export default class Home extends React.Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <h1>Temp</h1>
+        <h1></h1>
       );
     }
     return (
