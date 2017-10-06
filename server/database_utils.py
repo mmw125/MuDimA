@@ -207,7 +207,7 @@ class DatabaseConnection:
 
     def _create_tables(self):
         self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT)""")
-        self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT, keywords TEXT, topic_id TEXT,
+        self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT, keywords TEXT, topic_id TEXT, date DATETIME,
                                FOREIGN KEY(topic_id) REFERENCES topic)""")
         self.connection.commit()
 
