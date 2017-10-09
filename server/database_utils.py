@@ -18,11 +18,13 @@ class Article:
         self.title = title
         self.url = url
         self.author = author
-        try:
-            self.publishedAt = parser.parse(publishedAt)
-        except AttributeError:
+        if publishedAt:
+            try:
+                self.publishedAt = parser.parse(publishedAt)
+            except AttributeError:
+                self.publishedAt = date.today()
+        else:
             self.publishedAt = date.today()
-        print type(self.publishedAt)
         self.source = source
         self.urlToImage = urlToImage
         self.text = text
