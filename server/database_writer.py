@@ -17,4 +17,13 @@ def write_topics_to_database(grouping_list):
                                                                grouping.get_uuid()))
                     article.set_in_database(True)
         connection.commit()
+
+
+def remove_grouping_from_database(grouping):
+    with utils.DatabaseConnection() as (connection, cursor):
+        if not grouping.get_in_database():
+            cursor.execute("""DELETE FROM topic WHERE id = ?""", (grouping.get_uuid(),))
+            grouping.set_in_database(False)
+        for article in grouping.get_articles():
+            article.set_in_database(False)
         connection.commit()
