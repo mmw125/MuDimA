@@ -1,5 +1,4 @@
 import classifier
-import database_utils
 import database_writer
 import requests
 
