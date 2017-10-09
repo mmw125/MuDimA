@@ -1,5 +1,6 @@
 import constants
 import database_utils
+import database_writer
 import news_fetcher
 
 
@@ -18,11 +19,16 @@ def group_articles(article_list):
             if similarity > best_grouping_similarity:
                 # If this article has a high similarity with two separate groups, then combine the groups.
                 if best_grouping_similarity > constants.MIN_COMBINE_GROUP_PERCENTAGE:
-                    grouping.combine_group(best_grouping)
-                    groupings.remove(best_grouping)
+                    if best_grouping.in_database():
+                        if grouping.in_database():
+                            database_writer.remove_grouping_from_database(grouping)
+                        best_grouping.combine_group(grouping)
+                        groupings.remove(grouping)
+                    else:
+                        grouping.combine_group(best_grouping)
+                        groupings.remove(best_grouping)
                 best_grouping = grouping
                 best_grouping_similarity = similarity
-
         if best_grouping is not None and best_grouping_similarity > constants.MIN_GROUPING_PERCENTAGE:
             best_grouping.add_article(article)
         else:
