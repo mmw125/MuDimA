@@ -13,7 +13,7 @@ class Article:
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="",
-                 publishedAt="", source={}, urlToImage="", text=None):
+                 publishedAt="", source={}, urlToImage="", text=None, in_database=False):
         self.description = description
         self.title = title
         self.url = url
@@ -30,6 +30,7 @@ class Article:
         self.text = text
         self.article = None
         self.keywords = None
+        self._in_database = in_database
 
     def get_description(self):
         return self.description
@@ -91,6 +92,12 @@ class Article:
         similar = float(sum(len(title) for title in other_article.get_keywords().intersection(self.get_keywords())))
         return 0 if similar == 0 else similar / min([other_article.get_keyword_length(), self.get_keyword_length()])
 
+    def in_database(self):
+        return self._in_database
+
+    def set_in_database(self, in_database):
+        self._in_database = in_database
+
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")
 
@@ -132,9 +139,10 @@ class Source:
 
 class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
-    def __init__(self, article):
+    def __init__(self, article, in_database=False):
         self._articles = [article]
         self._uuid = None
+        self._in_database = in_database
 
     def add_article(self, article):
         self._articles.append(article)
@@ -183,6 +191,12 @@ class Grouping(object):
             self._uuid = uuid.uuid4()
         return str(self._uuid)
 
+    def in_database(self):
+        return self._in_database
+
+    def set_in_database(self, in_database):
+        self._in_database = in_database
+
     def __str__(self):
         return '\n'.join([str(art) for art in self._articles])
 
@@ -210,7 +224,7 @@ class DatabaseConnection:
     def _create_tables(self):
         self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT)""")
         self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT, keywords TEXT, topic_id TEXT, date DATETIME,
-                               FOREIGN KEY(topic_id) REFERENCES topic)""")
+                               FOREIGN KEY(topic_id) REFERENCES topic ON DELETE CASCADE)""")
         self.connection.commit()
 
     def __enter__(self):
