@@ -33,7 +33,7 @@ def remove_grouping_from_database(grouping):
 def clean_database():
     """Removes articles from the database when they are old."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("""DELETE FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id 
+        cursor.execute("""DELETE FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id
                        AND julianday(CURRENT_TIMESTAMP) - julianday(date) <= ?)""",
                        (constants.ARTICLE_REPLACEMENT_TIME,))
         connection.commit()

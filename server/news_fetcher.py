@@ -1,4 +1,5 @@
 import classifier
+import database_utils
 import database_writer
 import requests
 
@@ -53,7 +54,6 @@ def update_database():
     database_writer.write_topics_to_database(grouped)
 
 if __name__ == "__main__":  # pragma: no cover
-    import database_utils
     with database_utils.DatabaseConnection(refresh=True):
         pass  # refresh the database
     update_database()
