@@ -61,12 +61,16 @@ class Article:
 
     def get_keywords(self):
         if self.keywords is None:
+            print self.get_url()
             self._init_article()
-            try:
-                self.article.nlp()
-            except newspaper.article.ArticleException:
-                pass
-            self.keywords = set(self.article.keywords)
+            if self.article.text:
+                try:
+                    self.article.nlp()
+                    self.keywords = set(self.article.keywords)
+                except newspaper.article.ArticleException:
+                    self.keywords = set()
+            else:
+                self.keywords = set()
         return self.keywords
 
     def get_keyword_length(self):
@@ -161,7 +165,7 @@ def update_database():
     grouped = classifier.group_articles(articles)
     database_writer.write_topics_to_database(grouped)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import database_utils
     with database_utils.DatabaseConnection(refresh=True):
         pass  # refresh the database
