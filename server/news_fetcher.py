@@ -1,6 +1,7 @@
 import classifier
 import database_utils
 import database_writer
+import models
 import requests
 
 default_language = "en"
@@ -17,8 +18,8 @@ def _parse_response(response):
     if response_dict.get("status") != "ok":
         raise NewsApiError(response_dict.get('message'))
     if response_dict.get("articles"):
-        return [database_utils.Article.create_from_dict(article) for article in response_dict.get("articles", [])]
-    return [database_utils.Source(source) for source in response_dict.get("sources", [])]
+        return [models.Article.create_from_dict(article) for article in response_dict.get("articles", [])]
+    return [models.Source(source) for source in response_dict.get("sources", [])]
 
 
 def _build_url(endpoint, params=None):

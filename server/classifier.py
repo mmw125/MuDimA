@@ -1,12 +1,12 @@
 import constants
-import database_utils
 import database_writer
+import models
 import news_fetcher
 
 
 def group_articles(article_list):
     """Group articles from the article list into Grouping objects."""
-    article_list = [database_utils.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
+    article_list = [models.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
     groupings = []
     for article in article_list:
         if not article.get_keywords():
@@ -32,7 +32,7 @@ def group_articles(article_list):
         if best_grouping is not None and best_grouping_similarity > constants.MIN_GROUPING_PERCENTAGE:
             best_grouping.add_article(article)
         else:
-            groupings.append(database_utils.Grouping(article))
+            groupings.append(models.Grouping(article))
     return groupings
 
 if __name__ == "__main__":  # pragma: no cover
