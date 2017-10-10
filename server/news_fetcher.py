@@ -1,4 +1,5 @@
 import classifier
+import database_reader
 import database_utils
 import database_writer
 import models
@@ -50,7 +51,9 @@ def get_sources(language=default_language, category="", country=""):
 
 
 def update_database():
-    articles = get_top_headlines()[:100]
+    articles = get_top_headlines()
+    urls_in_database = database_reader.get_urls()
+    articles = [article for article in articles if article.get_url() not in urls_in_database]
     grouped = classifier.group_articles(articles)
     database_writer.write_topics_to_database(grouped)
 

@@ -1,6 +1,13 @@
 import database_utils
 
 
+def get_urls():
+    """Gets all of the urls in articles in the database."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT link FROM article")
+        return set(item[0] for item in cursor.fetchall())
+
+
 def get_topics():
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT topic.name, topic.id, topic.image_url, count(*) FROM article, topic "
