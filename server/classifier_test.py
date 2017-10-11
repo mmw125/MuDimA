@@ -43,5 +43,5 @@ class FindURLErrorTest(unittest.TestCase):
         self.url = ["https://www.techwyse.com/blog/online-innovation/introducing-the-world's"
                     "-first-lorem-ipsum-website-checker/"]
 
-    def test_parsing_issue(self) :
+    def test_parsing_issue(self):
         self.assertEqual(1, len(classifier.group_articles(self.url)))
