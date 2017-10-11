@@ -10,8 +10,8 @@ class Article:
     def create_from_dict(article_dict):
         return Article(**article_dict)
 
-    def __init__(self, url, description="", title="", author="",
-                 publishedAt="", source={}, urlToImage="", text=None, in_database=False):
+    def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
+                 text=None, in_database=False, keywords=None):
         self.description = description
         self.title = title
         self.url = url
@@ -27,7 +27,7 @@ class Article:
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
-        self.keywords = None
+        self.keywords = keywords
         self._in_database = in_database
 
     def get_description(self):
@@ -70,7 +70,6 @@ class Article:
 
     def get_keywords(self):
         if self.keywords is None:
-            print self.get_url()
             self._init_article()
             if self.article.text:
                 try:
