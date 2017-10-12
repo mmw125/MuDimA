@@ -98,6 +98,9 @@ class Article:
     def __str__(self):
         return " ".join((self.title, self.url)).encode("utf-8")
 
+    def __eq__(self, other):
+        return other.get_url() == self.get_url() if isinstance(other, Article) else False
+
 
 class Source:
     def __init__(self, source):
@@ -196,3 +199,6 @@ class Grouping(object):
 
     def __str__(self):
         return '\n'.join([str(art) for art in self._articles])
+
+    def __eq__(self, other):
+        return other.get_articles() == self.get_articles() if isinstance(other, Grouping) else False

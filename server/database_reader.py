@@ -1,4 +1,5 @@
 import database_utils
+import models
 
 
 def get_urls():
@@ -26,18 +27,19 @@ def get_stories_for_topic(topic_id):
 
 def get_grouped_articles():
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, id, url FROM article")
+        cursor.execute("SELECT name, keywords, topic_id, link FROM article")
         groups = {}
         for item in cursor.fetchall():
             name, keywords, id, url = item
-            article = database_utils.Article(url=url, title=name, in_database=True)
+            article = models.Article(url=url, title=name, in_database=True)
             article.set_keywords(keywords)
             if id in groups:
                 groups.get(id).add_article(article)
             else:
-                group = database_utils.Grouping(article, in_database=True)
+                group = models.Grouping(article, in_database=True)
                 group.set_uuid(id)
-        return groups.values()
+                groups[id] = group
+        return list(groups.values())
 
 
 if __name__ == "__main__":  # pragma: no cover
