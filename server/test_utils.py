@@ -32,7 +32,7 @@ class DatabaseTest(unittest.TestCase):
         self._database_name_mock.start()
         self._database_location = database_utils.database_path(database_utils.database_name())
         self._delete_database()
-        self.article = models.Article("example.com", title="Example")
+        self.article = models.Article("example.com", title="Example", keywords=["0", "1"])
         self.grouping = models.Grouping(self.article)
 
     def tearDown(self):

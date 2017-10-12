@@ -21,3 +21,9 @@ class DatabaseWriterTest(test_utils.DatabaseTest):
         database_writer.remove_grouping_from_database(self.grouping)
         self.assertFalse(self.grouping.in_database())
         self.assertEqual(0, len(database_reader.get_urls()))
+
+    def test_clean_database(self):
+        database_writer.write_topics_to_database([self.grouping])
+        self.assertEqual(1, len(database_reader.get_urls()))
+        database_writer.clean_database()
+        self.assertEqual(1, len(database_reader.get_urls()))
