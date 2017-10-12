@@ -22,11 +22,13 @@ def write_topics_to_database(grouping_list):
 
 def remove_grouping_from_database(grouping):
     with database_utils.DatabaseConnection() as (connection, cursor):
-        if not grouping.get_in_database():
+        if grouping.in_database():
             cursor.execute("""DELETE FROM topic WHERE id = ?""", (grouping.get_uuid(),))
             grouping.set_in_database(False)
         for article in grouping.get_articles():
-            article.set_in_database(False)
+            if article.in_database():
+                cursor.execute("""DELETE FROM article WHERE link = ?""", (article.get_url(),))
+                article.set_in_database(False)
         connection.commit()
 
 
