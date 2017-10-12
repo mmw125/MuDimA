@@ -3,6 +3,7 @@ import database_utils
 
 
 def write_topics_to_database(grouping_list):
+    """Writes groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
             if not grouping.in_database():
@@ -21,21 +22,33 @@ def write_topics_to_database(grouping_list):
 
 
 def remove_grouping_from_database(grouping):
+    """Removes the given grouping from the database with its associated articles."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        if grouping.in_database():
-            cursor.execute("""DELETE FROM topic WHERE id = ?""", (grouping.get_uuid(),))
-            grouping.set_in_database(False)
+        _remove_group_ids_from_database(grouping.get_uuid())
+        grouping.set_in_database(False)
         for article in grouping.get_articles():
-            if article.in_database():
-                cursor.execute("""DELETE FROM article WHERE link = ?""", (article.get_url(),))
-                article.set_in_database(False)
+            article.set_in_database(False)
+        connection.commit()
+
+
+def _remove_group_ids_from_database(group_ids):
+    """Removes the topics with the given ids from the database with the associated articles."""
+    if isinstance(group_ids, (str, unicode)):
+        group_ids = [group_ids]
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        for group_id in group_ids:
+            cursor.execute("""DELETE FROM topic WHERE id = ?""", (group_id,))
+            cursor.execute("""DELETE FROM article WHERE topic_id = ?""", (group_id,))
         connection.commit()
 
 
 def clean_database():
     """Removes articles from the database when they are old."""
+    groups_to_remove = []
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("""DELETE FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id
+        cursor.execute("""SELECT id FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id
                        AND julianday(CURRENT_TIMESTAMP) - julianday(date) <= ?)""",
                        (constants.ARTICLE_REPLACEMENT_TIME,))
+        groups_to_remove = [item[0] for item in cursor.fetchall()]
         connection.commit()
+    _remove_group_ids_from_database(groups_to_remove)
