@@ -1,3 +1,5 @@
+"""Classifies articles together based on their keywords."""
+
 import constants
 import database_writer
 import models
@@ -34,6 +36,7 @@ def group_articles(article_list):
         else:
             groupings.append(models.Grouping(article))
     return groupings
+
 
 if __name__ == "__main__":  # pragma: no cover
     articles = news_fetcher.get_top_headlines()[:20]
