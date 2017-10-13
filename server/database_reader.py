@@ -11,6 +11,7 @@ def get_urls():
 
 
 def get_topics(page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
+    """Gets the topics for the given page."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         start = page_number * articles_per_page
         end = (page_number + 1) * articles_per_page
@@ -21,6 +22,7 @@ def get_topics(page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
 
 
 def get_stories_for_topic(topic_id):
+    """Gets all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
@@ -29,6 +31,7 @@ def get_stories_for_topic(topic_id):
 
 
 def get_grouped_articles():
+    """Gets the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name, keywords, topic_id, link FROM article")
         groups = {}
