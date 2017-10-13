@@ -10,6 +10,14 @@ def get_urls():
         return set(item[0] for item in cursor.fetchall())
 
 
+def get_number_topics():
+    """Gets just the number of topics from the database."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT 1 FROM article, topic "
+                       "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+        return len(cursor.fetchall())
+
+
 def get_topics(page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
     with database_utils.DatabaseConnection() as (connection, cursor):
         start = page_number * articles_per_page
