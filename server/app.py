@@ -21,7 +21,8 @@ def get_sources():
 
 @app.route("/getTopics")
 def get_topics():
-    return json.dumps(database_reader.get_topics())
+    page_number = int(request.args.get("p", 0))
+    return json.dumps(database_reader.get_topics(page_number=page_number))
 
 
 @app.route("/getStories")

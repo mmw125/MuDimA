@@ -8,3 +8,6 @@ MIN_COMBINE_GROUP_PERCENTAGE = .6
 
 # Articles get removed from the database after 2 days
 ARTICLE_REPLACEMENT_TIME = 2
+
+# Number of articles to display per page on the front end
+ARTICLES_PER_PAGE = 10
