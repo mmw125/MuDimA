@@ -1,3 +1,4 @@
+import constants
 import database_utils
 import models
 
@@ -9,12 +10,22 @@ def get_urls():
         return set(item[0] for item in cursor.fetchall())
 
 
-def get_topics():
+def get_number_topics():
+    """Gets just the number of topics from the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT 1 FROM article, topic "
+                       "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+        return len(cursor.fetchall())
+
+
+def get_topics(page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        start = page_number * articles_per_page
+        end = (page_number + 1) * articles_per_page
         cursor.execute("SELECT topic.name, topic.id, topic.image_url, count(*) FROM article, topic "
-                       "WHERE article.topic_id = topic.id GROUP BY topic.id;")
+                       "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
         return sorted([{"title": item[0], "id": item[1], "image": item[2], "count": item[3]}
-                       for item in cursor.fetchall()], key=lambda x: -x["count"])
+                       for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
 
 
 def get_stories_for_topic(topic_id):
