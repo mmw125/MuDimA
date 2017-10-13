@@ -30,8 +30,9 @@ DISSIMILAR_ARTICLES = (
 
 class DatabaseTest(unittest.TestCase):
     """A parent class for the database class that handles mocking out the default database."""
+
     def setUp(self):
-        """Sets up the class for the tests."""
+        """Set up the class for the tests."""
         self._database_name_mock = mock.patch("server.database_utils.database_name", return_value="mudima_test.db")
         self._database_name_mock.start()
         self._database_location = database_utils.database_path(database_utils.database_name())
@@ -40,7 +41,7 @@ class DatabaseTest(unittest.TestCase):
         self.grouping = models.Grouping(self.article)
 
     def tearDown(self):
-        """Tears down the class for the tests."""
+        """Tear down the class for the tests."""
         self._delete_database()
         self._database_name_mock.stop()
 
