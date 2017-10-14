@@ -1,16 +1,22 @@
+"""Some utilities for connecting to the database."""
+
 import sqlite3
 import os
 
 
 def database_name():
+    """Get the name of the database."""
     return "mudima.db"
 
 
 def database_path(name):
+    """Get the path of the database."""
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), name)
 
 
 class DatabaseConnection:
+    """Handles the connection to the database."""
+
     def __init__(self, path=None, refresh=False):
         db_path = database_path(path if path else database_name())
         exists = os.path.exists(db_path)

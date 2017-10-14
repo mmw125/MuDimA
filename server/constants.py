@@ -1,4 +1,4 @@
-# A place for all of those "magic numbers" that may need to be fiddled with.
+"""A place for all of those "magic numbers" that may need to be fiddled with."""
 
 # There must be this much keyword similarity to attach two articles together.
 MIN_GROUPING_PERCENTAGE = .25

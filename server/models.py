@@ -1,3 +1,5 @@
+"""All of the models that are used throughout the program."""
+
 import newspaper
 import uuid
 
@@ -6,8 +8,11 @@ from dateutil import parser
 
 
 class Article:
+    """Represents an article."""
+
     @staticmethod
     def create_from_dict(article_dict):
+        """Create an article from a dict."""
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
@@ -31,24 +36,31 @@ class Article:
         self._in_database = in_database
 
     def get_description(self):
+        """Get description."""
         return self.description
 
     def get_title(self):
+        """Get title."""
         return self.title
 
     def get_url(self):
+        """Get url."""
         return self.url
 
     def get_author(self):
+        """Get author's name."""
         return self.author
 
     def get_published_at(self):
+        """Get published date and time."""
         return self.publishedAt
 
     def get_source(self):
+        """Get the source for the article."""
         return Source(self.source)
 
     def get_url_to_image(self):
+        """Get description."""
         return self.urlToImage
 
     def _init_article(self):
@@ -58,17 +70,20 @@ class Article:
             self.article.parse()
 
     def get_text(self):
+        """Get the text of the article."""
         if self.text is None:
             self._init_article()
             self.text = self.article.text
         return self.text
 
     def set_keywords(self, keywords):
+        """Set the keywords for the article."""
         if isinstance(keywords, (str, unicode)):
             keywords = keywords.split(" ")
         self.keywords = keywords
 
     def get_keywords(self):
+        """Get the keywords for the article."""
         if self.keywords is None:
             self._init_article()
             if self.article.text:
@@ -82,17 +97,20 @@ class Article:
         return self.keywords
 
     def get_keyword_length(self):
-        """Gets the sum of all of the lengths of the keywords."""
+        """Get the sum of all of the lengths of the keywords."""
         return sum(len(i) for i in self.get_keywords())
 
     def keyword_similarity(self, other_article):
+        """Get the similarity of the articles keywords."""
         similar = float(sum(len(title) for title in other_article.get_keywords().intersection(self.get_keywords())))
         return 0 if similar == 0 else similar / min([other_article.get_keyword_length(), self.get_keyword_length()])
 
     def in_database(self):
+        """Get if the article is in the database."""
         return self._in_database
 
     def set_in_database(self, in_database):
+        """Set if the article thinks it is in the database."""
         self._in_database = in_database
 
     def __str__(self):
@@ -103,6 +121,8 @@ class Article:
 
 
 class Source:
+    """Represents a source that has articles."""
+
     def __init__(self, source):
         self._id = source.get("id")
         self._name = source.get("name")
@@ -113,24 +133,31 @@ class Source:
         self._country = source.get("country")
 
     def get_id(self):
+        """Get source id."""
         return self._id
 
     def get_name(self):
+        """Get source name."""
         return self._name
 
     def get_description(self):
+        """Get source description."""
         return self._description
 
     def get_url(self):
+        """Get source url."""
         return self._url
 
     def get_category(self):
+        """Get source category."""
         return self._category
 
     def get_language(self):
+        """Get source language."""
         return self._language
 
     def get_country(self):
+        """Get source country."""
         return self._country
 
     def __str__(self):
@@ -139,21 +166,26 @@ class Source:
 
 class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
+
     def __init__(self, article, in_database=False):
         self._articles = [article]
         self._uuid = None
         self._in_database = in_database
 
     def add_article(self, article):
+        """Add the new article from the list."""
         self._articles.append(article)
 
     def get_articles(self):
+        """Get the article in the grouping."""
         return self._articles
 
     def combine_group(self, group):
+        """Absorb the items from the other group."""
         self._articles.extend(group.get_articles())
 
     def best_similarity(self, article):
+        """Get the keyword similarity of the most similar article."""
         return max(article.keyword_similarity(group_article) for group_article in self._articles)
 
     def get_title(self):
@@ -178,23 +210,28 @@ class Grouping(object):
         return best.get_title()
 
     def get_image_url(self):
+        """Get the image url."""
         for article in self._articles:
             if article.get_url_to_image():
                 return article.get_url_to_image()
         return None
 
     def set_uuid(self, uuid):
+        """Set the uuid."""
         self._uuid = uuid
 
     def get_uuid(self):
+        """Get the uuid."""
         if self._uuid is None:
             self._uuid = uuid.uuid4()
         return str(self._uuid)
 
     def in_database(self):
+        """Get if the group is in the database."""
         return self._in_database
 
     def set_in_database(self, in_database):
+        """Set if group in database."""
         self._in_database = in_database
 
     def __str__(self):

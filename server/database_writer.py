@@ -1,9 +1,11 @@
+"""Functions that write to the database."""
+
 import constants
 import database_utils
 
 
 def write_topics_to_database(grouping_list):
-    """Writes groups in the grouping list into the database if they are not already there."""
+    """Write groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
             if not grouping.in_database():
@@ -22,7 +24,7 @@ def write_topics_to_database(grouping_list):
 
 
 def remove_grouping_from_database(grouping):
-    """Removes the given grouping from the database with its associated articles."""
+    """Remove the given grouping from the database with its associated articles."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         _remove_group_ids_from_database(grouping.get_uuid())
         grouping.set_in_database(False)
@@ -32,7 +34,7 @@ def remove_grouping_from_database(grouping):
 
 
 def _remove_group_ids_from_database(group_ids):
-    """Removes the topics with the given ids from the database with the associated articles."""
+    """Remove the topics with the given ids from the database with the associated articles."""
     if isinstance(group_ids, (str, unicode)):
         group_ids = [group_ids]
     with database_utils.DatabaseConnection() as (connection, cursor):
@@ -43,7 +45,7 @@ def _remove_group_ids_from_database(group_ids):
 
 
 def clean_database():
-    """Removes articles from the database when they are old."""
+    """Remove articles from the database when they are old."""
     groups_to_remove = []
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("""SELECT id FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id
