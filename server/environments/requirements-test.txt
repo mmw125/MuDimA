@@ -1,4 +1,5 @@
 mock
-pep8
+flake8
+flake8_docstrings
 pytest
 pytest-cov
