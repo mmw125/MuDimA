@@ -38,4 +38,8 @@ def get_stories_for_topic():
 
 
 if __name__ == "__main__":  # pragma: no cover
+    if not database_reader.get_urls():
+        # If there is nothing in the database, update it
+        print "Nothing in database. Populating..."
+        news_fetcher.update_database()
     app.run(host="localhost", port=80)

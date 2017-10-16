@@ -1,6 +1,7 @@
 """Fetches the news from the api."""
 
 import classifier
+import database_reader
 import database_utils
 import database_writer
 import models
@@ -23,7 +24,8 @@ def _parse_response(response):
     if response_dict.get("status") != "ok":
         raise NewsApiError(response_dict.get('message'))
     if response_dict.get("articles"):
-        return [models.Article.create_from_dict(article) for article in response_dict.get("articles", [])]
+        return {article["url"]: models.Article.create_from_dict(article)
+                for article in response_dict.get("articles", [])}.values()
     return [models.Source(source) for source in response_dict.get("sources", [])]
 
 
@@ -70,5 +72,4 @@ if __name__ == "__main__":  # pragma: no cover
     with database_utils.DatabaseConnection(refresh=True):
         pass  # refresh the database
     update_database()
-    import database_reader
     print database_reader.get_topics()
