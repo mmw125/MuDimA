@@ -72,4 +72,3 @@ if __name__ == "__main__":  # pragma: no cover
     with database_utils.DatabaseConnection(refresh=True):
         pass  # refresh the database
     update_database()
-    print database_reader.get_topics()
