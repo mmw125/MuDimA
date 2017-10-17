@@ -48,6 +48,13 @@ def clean_database():
     """Remove articles from the database when they are old."""
     groups_to_remove = []
     with database_utils.DatabaseConnection() as (connection, cursor):
+        # Remove all of the topics with no topic and
+        cursor.execute("""DELETE FROM article WHERE article.topic_id IS NULL 
+                          AND julianday(CURRENT_TIMESTAMP) - julianday(article.date) <= ?""",
+                       (constants.ARTICLE_REPLACEMENT_TIME,))
+        connection.commit()
+
+        # Remove all of the topics that only have articles that are over some number of days old
         cursor.execute("""SELECT id FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id
                        AND julianday(CURRENT_TIMESTAMP) - julianday(date) <= ?)""",
                        (constants.ARTICLE_REPLACEMENT_TIME,))

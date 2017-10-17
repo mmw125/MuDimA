@@ -10,8 +10,14 @@ def group_articles(article_list):
     """Group articles from the article list into Grouping objects."""
     article_list = [models.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
     groupings = []
+    no_keyword_grouping = None
     for article in article_list:
         if not article.get_keywords():
+            if no_keyword_grouping is None:
+                # in_database is set to True here because we do not want a no keyword grouping in the database.
+                no_keyword_grouping = models.Grouping(article, in_database=True)
+            else:
+                no_keyword_grouping.add_article(article)
             continue  # Skip the article if the keywords cannot be gotten from it.
         best_grouping, best_grouping_similarity = None, 0
 
@@ -35,6 +41,8 @@ def group_articles(article_list):
             best_grouping.add_article(article)
         else:
             groupings.append(models.Grouping(article))
+    if no_keyword_grouping:
+        groupings.append(no_keyword_grouping)
     return groupings
 
 

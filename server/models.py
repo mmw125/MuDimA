@@ -171,6 +171,7 @@ class Grouping(object):
         self._articles = [article]
         self._uuid = None
         self._in_database = in_database
+        self._has_uuid = False
 
     def add_article(self, article):
         """Add the new article from the list."""
@@ -219,11 +220,13 @@ class Grouping(object):
     def set_uuid(self, uuid):
         """Set the uuid."""
         self._uuid = uuid
+        self._has_uuid = True
 
     def get_uuid(self):
         """Get the uuid."""
-        if self._uuid is None:
+        if not self._has_uuid:
             self._uuid = uuid.uuid4()
+            self._has_uuid = True
         return str(self._uuid)
 
     def in_database(self):
