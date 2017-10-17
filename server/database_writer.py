@@ -16,9 +16,9 @@ def write_topics_to_database(grouping_list):
                 if not article.in_database():
                     cursor.execute("INSERT INTO article (name, link, keywords, date, topic_id) "
                                    "VALUES (?, ?, ?, ?, ?)""", (article.get_title(), article.get_url(),
-                                                               " ".join(article.get_keywords()),
-                                                               article.get_published_at(),
-                                                               grouping.get_uuid()))
+                                                                " ".join(article.get_keywords()),
+                                                                article.get_published_at(),
+                                                                grouping.get_uuid()))
                     article.set_in_database(True)
         connection.commit()
 
