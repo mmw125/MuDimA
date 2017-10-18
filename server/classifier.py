@@ -1,6 +1,7 @@
 """Classifies articles together based on their keywords."""
 
 import constants
+import database_reader
 import database_writer
 import models
 import news_fetcher
@@ -9,7 +10,7 @@ import news_fetcher
 def group_articles(article_list):
     """Group articles from the article list into Grouping objects."""
     article_list = [models.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
-    groupings = []
+    groupings = database_reader.get_grouped_articles()
     no_keyword_grouping = None
     for article in article_list:
         if not article.get_keywords():
