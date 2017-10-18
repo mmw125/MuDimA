@@ -23,5 +23,7 @@ class NewsFetcherTest(unittest.TestCase):
             self.assertIsInstance(source, models.Source)
 
     def test_parse_response_error(self):
+        """Test parse_response with an error message."""
         response = {"status": "error", "message": "error_message"}
-
+        with self.assertRaises(news_fetcher.NewsApiError):
+            news_fetcher._parse_response(response)

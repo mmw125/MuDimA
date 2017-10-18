@@ -20,7 +20,7 @@ class NewsApiError(Exception):
 
 def _parse_response(response):
     """Parse the response from the news api."""
-    response_dict = response.json()
+    response_dict = response if isinstance(response, dict) else response.json()
     if response_dict.get("status") != "ok":
         raise NewsApiError(response_dict.get("message"))
     if response_dict.get("articles"):
