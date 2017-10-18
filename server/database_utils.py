@@ -31,7 +31,7 @@ class DatabaseConnection:
     def _create_tables(self):
         self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT)""")
         self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT PRIMARY KEY, keywords TEXT,
-                               topic_id TEXT NOT NULL, date DATETIME,
+                               topic_id TEXT, date DATETIME,
                                FOREIGN KEY(topic_id) REFERENCES topic(id) ON DELETE CASCADE)""")
         self.connection.commit()
 
