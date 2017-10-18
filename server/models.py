@@ -6,6 +6,8 @@ import uuid
 from datetime import date
 from dateutil import parser
 
+from lxml import etree
+
 
 class Article:
     """Represents an article."""
@@ -32,7 +34,8 @@ class Article:
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
-        self.keywords = keywords
+        self.keywords = None
+        self.set_keywords(keywords)
         self._in_database = in_database
 
     def get_description(self):
@@ -67,33 +70,39 @@ class Article:
         if self.article is None:
             self.article = newspaper.Article(self.get_url())
             self.article.download()
-            self.article.parse()
+            try:
+                self.article.parse()
+            except etree.XMLSyntaxError:
+                pass
 
     def get_text(self):
         """Get the text of the article."""
-        if self.text is None:
+        if self.article is None:
             self._init_article()
-            self.text = self.article.text
-        return self.text
+        return self.article.text
 
     def set_keywords(self, keywords):
         """Set the keywords for the article."""
+        if keywords is None:
+            return
         if isinstance(keywords, (str, unicode)):
             keywords = keywords.split(" ")
-        self.keywords = keywords
+        self.keywords = set(keywords)
 
     def get_keywords(self):
         """Get the keywords for the article."""
-        if self.keywords is None:
+        if self.keywords is not None:
+            return self.keywords
+        if self.article is None:
             self._init_article()
-            if self.article.text:
-                try:
-                    self.article.nlp()
-                    self.keywords = set(self.article.keywords)
-                except newspaper.article.ArticleException:
-                    self.keywords = set()
-            else:
+        if self.article.text:
+            try:
+                self.article.nlp()
+                self.keywords = set(self.article.keywords)
+            except newspaper.article.ArticleException:
                 self.keywords = set()
+        else:
+            self.keywords = set()
         return self.keywords
 
     def get_keyword_length(self):
@@ -113,7 +122,7 @@ class Article:
         """Set if the article thinks it is in the database."""
         self._in_database = in_database
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return " ".join((self.title, self.url)).encode("utf-8")
 
     def __eq__(self, other):
@@ -160,7 +169,7 @@ class Source:
         """Get source country."""
         return self._country
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return " ".join((self._name, self._url)).encode("utf-8")
 
 
@@ -237,7 +246,7 @@ class Grouping(object):
         """Set if group in database."""
         self._in_database = in_database
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
 
     def __eq__(self, other):
