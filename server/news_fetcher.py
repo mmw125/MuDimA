@@ -22,7 +22,7 @@ def _parse_response(response):
     """Parse the response from the news api."""
     response_dict = response.json()
     if response_dict.get("status") != "ok":
-        raise NewsApiError(response_dict.get('message'))
+        raise NewsApiError(response_dict.get("message"))
     if response_dict.get("articles"):
         return {article["url"]: models.Article.create_from_dict(article)
                 for article in response_dict.get("articles", [])}.values()
@@ -39,7 +39,7 @@ def _build_url(endpoint, params=None):
         if not value:
             continue
         if isinstance(value, (list, tuple)):
-            value = ','.join(value)
+            value = ",".join(value)
         param_list.append(str(key) + "=" + value)
     return news_api_url + endpoint + "?" + "&".join(param_list)
 
