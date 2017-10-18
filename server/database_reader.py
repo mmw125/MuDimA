@@ -15,8 +15,8 @@ def get_urls():
 def get_number_topics():
     """Get just the number of topics from the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT 1 FROM article, topic "
-                       "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+        cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND "
+                       "article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;")
         return len(cursor.fetchall())
 
 
