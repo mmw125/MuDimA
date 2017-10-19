@@ -2,7 +2,6 @@
 
 import classifier
 import database_reader
-import database_utils
 import database_writer
 import models
 import requests
@@ -66,9 +65,3 @@ def update_database():
     articles = [article for article in articles if article.get_url() not in urls_in_database]
     grouped = classifier.group_articles(articles)
     database_writer.write_topics_to_database(grouped)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    with database_utils.DatabaseConnection(refresh=True):
-        pass  # refresh the database
-    update_database()

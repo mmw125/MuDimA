@@ -4,7 +4,6 @@ import constants
 import database_reader
 import database_writer
 import models
-import news_fetcher
 
 
 def group_articles(article_list):
@@ -45,15 +44,3 @@ def group_articles(article_list):
     if no_keyword_grouping:
         groupings.append(no_keyword_grouping)
     return groupings
-
-
-if __name__ == "__main__":  # pragma: no cover
-    articles = news_fetcher.get_top_headlines()[:20]
-    for a in articles:
-        print a
-    grouped = group_articles(articles)
-    for group in grouped:
-        print "---------------------------------------------------"
-        print group.get_title()
-        for a in group.get_articles():
-            print a
