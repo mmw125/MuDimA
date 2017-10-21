@@ -30,9 +30,7 @@ export default class Home extends React.Component {
     }
     return (
       <div className="row">
-        <div className="col-md-12">
-          {this.state.topics.map(storyData => <StoryCard url={storyData.image} name={storyData.title} id={storyData.id} count={storyData.count} {...storyData} />)}
-        </div>
+        {this.state.topics.map(storyData => <StoryCard url={storyData.image} name={storyData.title} id={storyData.id} count={storyData.count} {...storyData} />)}
       </div>
       );
   }
