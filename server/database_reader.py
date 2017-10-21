@@ -56,9 +56,3 @@ def get_grouped_articles():
                 group.set_uuid(id)
                 groups[id] = group
         return list(groups.values())
-
-
-if __name__ == "__main__":  # pragma: no cover
-    print get_topics()
-    for topic in get_topics():
-        print get_stories_for_topic(topic.get("id"))
