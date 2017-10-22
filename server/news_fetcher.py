@@ -49,14 +49,17 @@ def get_top_headlines(sources=list(), q=list(), category="", language=default_la
                       country="", add_category_information=False):
     """Get the top headlines from the news api."""
     if add_category_information:
+        url_headline_set = {}
         for category in categories:
-
+            for headline in get_top_headlines(sources, q, category, language, country, False):
+                if headline.get_url() not in url_headline_set:
+                    url_headline_set[headline.get_url()] = headline
+        return url_headline_set.values()
     if not add_category_information or category:
         url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
                                            "language": language, "country": country})
         response = requests.get(url)
         return _parse_response(response, category=category)
-
 
 
 def get_sources(language=default_language, category="", country=""):
