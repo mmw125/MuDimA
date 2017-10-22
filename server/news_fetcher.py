@@ -9,6 +9,8 @@ import requests
 default_language = "en"
 news_api_url = "http://beta.newsapi.org/v2/"
 news_api_key = "25a1ccdea267479c95010aa442e376e5"
+categories = ("general", "business", "entertainment", "gaming", "health-and-medical",
+              "music", "politics", "science-and-nature", "sport", "technology")
 
 
 class NewsApiError(Exception):
@@ -17,13 +19,13 @@ class NewsApiError(Exception):
     pass
 
 
-def _parse_response(response):
+def _parse_response(response, category=None):
     """Parse the response from the news api."""
     response_dict = response if isinstance(response, dict) else response.json()
     if response_dict.get("status") != "ok":
         raise NewsApiError(response_dict.get("message"))
     if response_dict.get("articles"):
-        return {article["url"]: models.Article.create_from_dict(article)
+        return {article["url"]: models.Article.create_from_dict(article, category=category)
                 for article in response_dict.get("articles", [])}.values()
     return [models.Source(source) for source in response_dict.get("sources", [])]
 
@@ -43,12 +45,18 @@ def _build_url(endpoint, params=None):
     return news_api_url + endpoint + "?" + "&".join(param_list)
 
 
-def get_top_headlines(sources=list(), q=list(), category="", language=default_language, country=""):
+def get_top_headlines(sources=list(), q=list(), category="", language=default_language,
+                      country="", add_category_information=False):
     """Get the top headlines from the news api."""
-    url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
-                                       "language": language, "country": country})
-    response = requests.get(url)
-    return _parse_response(response)
+    if add_category_information:
+        for category in categories:
+
+    if not add_category_information or category:
+        url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
+                                           "language": language, "country": country})
+        response = requests.get(url)
+        return _parse_response(response, category=category)
+
 
 
 def get_sources(language=default_language, category="", country=""):

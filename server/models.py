@@ -13,12 +13,13 @@ class Article:
     """Represents an article."""
 
     @staticmethod
-    def create_from_dict(article_dict):
+    def create_from_dict(article_dict, **kwargs):
         """Create an article from a dict."""
+        article_dict.update(kwargs)
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
-                 text=None, in_database=False, keywords=None):
+                 text=None, in_database=False, keywords=None, category=None):
         self.description = description
         self.title = title
         self.url = url
@@ -37,6 +38,7 @@ class Article:
         self.keywords = None
         self.set_keywords(keywords)
         self._in_database = in_database
+        self.category = category
 
     def get_description(self):
         """Get description."""
@@ -121,6 +123,10 @@ class Article:
     def set_in_database(self, in_database):
         """Set if the article thinks it is in the database."""
         self._in_database = in_database
+
+    def get_category(self):
+        """Get the category of the article."""
+        return self.category
 
     def __str__(self):  # pragma: no cover
         return " ".join((self.title, self.url)).encode("utf-8")
