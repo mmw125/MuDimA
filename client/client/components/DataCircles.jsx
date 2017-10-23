@@ -1,0 +1,25 @@
+// unfinished/src/components/data-circles.jsx
+import React from 'react';
+
+export default class DataCircles extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  renderCircles() {
+    return (coords, index) => {
+      const circleProps = {
+        cx: coords[0],
+        cy: coords[1],
+        r: 10,
+        key: index
+      };
+      return <circle onMouseOut={this.handleMouseOut.bind(this)} onMouseOver={this.handleMouseHover.bind(this)} {...circleProps} />;
+    };
+  }
+  render() {
+      return (
+        <g>{ this.props.data.map(this.renderCircles(this.props)) }</g>
+      );
+    }
+}
