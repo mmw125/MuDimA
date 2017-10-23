@@ -2,8 +2,8 @@ import React from 'react';
 import ScatterPlot from './ScatterPlot.jsx';
 
 const styles = {
-  width   : 500,
-  height  : 300,
+  width   : '100%',
+  height  : 1000,
   padding : 30,
 };
 
@@ -53,16 +53,18 @@ export default class Story extends React.Component {
     return (
 
       <div className="row">
+        <h1>{this.state.title}</h1>
         <ScatterPlot {...this.state} {...styles} />
-          <h1>{this.state.title}</h1>
 
-        <ul>
-        {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
-        </ul>
+
+
 
 
       </div>
 
       );
   }
+  // <ul>
+  // {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
+  // </ul>
 }
