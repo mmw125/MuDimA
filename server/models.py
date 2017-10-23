@@ -1,5 +1,6 @@
 """All of the models that are used throughout the program."""
 
+import collections
 import newspaper
 import uuid
 
@@ -183,6 +184,7 @@ class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
 
     def __init__(self, article, in_database=False):
+        assert isinstance(article, Article)
         self._articles = [article]
         self._uuid = None
         self._in_database = in_database
@@ -190,6 +192,7 @@ class Grouping(object):
 
     def add_article(self, article):
         """Add the new article from the list."""
+        assert isinstance(article, Article)
         self._articles.append(article)
 
     def get_articles(self):
@@ -251,6 +254,17 @@ class Grouping(object):
     def set_in_database(self, in_database):
         """Set if group in database."""
         self._in_database = in_database
+
+    def get_category(self):
+        """Get group's category."""
+        categories = collections.defaultdict(int)
+        for article in self._articles:
+            categories[article.get_category()] += 1
+        largest_key, largest_value = 0, None
+        for key, value in categories.iteritems():
+            if value > largest_value:
+                largest_key = key
+        return largest_key
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])

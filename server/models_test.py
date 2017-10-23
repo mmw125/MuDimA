@@ -2,6 +2,7 @@
 
 import mock
 import models
+import test_utils
 import unittest
 
 
@@ -20,3 +21,13 @@ class ArticleTest(unittest.TestCase):
         with mock.patch("traceback.print_exc"):
             self.assertEqual(0, len(article.get_keywords()))
             self.assertEqual("", article.get_text())
+
+
+class GroupingTest(unittest.TestCase):
+    """Tests for the grouping class in the models file."""
+
+    def test_combine_group(self):
+        g0 = models.Grouping(test_utils.SIMILAR_ARTICLES[0])
+        g1 = models.Grouping(test_utils.SIMILAR_ARTICLES[1])
+        g0.combine_group(g1)
+        self.assertEqual(list(test_utils.SIMILAR_ARTICLES[0:2]), list(g0.get_articles()))

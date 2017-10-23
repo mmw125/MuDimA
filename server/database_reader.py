@@ -12,11 +12,16 @@ def get_urls():
         return set(item[0] for item in cursor.fetchall())
 
 
-def get_number_topics():
+def get_number_topics(category=None):
     """Get just the number of topics from the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND "
-                       "article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;")
+        category_filter = "" if category is None else " article.category = AND "
+        if category is None:
+            cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND "
+                           "article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;")
+        else:
+            cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND article.category = ? AND"
+                           " article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
         return len(cursor.fetchall())
 
 

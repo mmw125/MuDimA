@@ -44,6 +44,10 @@ class UpdateDatabaseCommand(distutils.cmd.Command):
         """Set default values for options."""
         pass
 
+    def finalize_options(self):
+        """Post-process options."""
+        pass
+
     def run(self):
         """Run the command."""
         news_fetcher.update_database()

@@ -71,7 +71,7 @@ def get_sources(language=default_language, category="", country=""):
 
 def update_database():
     """Update the database with all the headlines from get_top_headlines."""
-    articles = get_top_headlines()
+    articles = get_top_headlines(add_category_information=True)
     urls_in_database = database_reader.get_urls()
     articles = [article for article in articles if article.get_url() not in urls_in_database]
     grouped = classifier.group_articles(articles)
