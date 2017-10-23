@@ -9,8 +9,9 @@ def write_topics_to_database(grouping_list):
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
             if not grouping.in_database():
-                cursor.execute("INSERT INTO topic (name, id, image_url) VALUES (?, ?, ?)",
-                               (grouping.get_title(), grouping.get_uuid(), grouping.get_image_url()))
+                cursor.execute("INSERT INTO topic (name, id, image_url, category) VALUES (?, ?, ?, ?)",
+                               (grouping.get_title(), grouping.get_uuid(),
+                                grouping.get_image_url(), grouping.get_category()))
                 grouping.set_in_database(True)
             for article in grouping.get_articles():
                 if not article.in_database():

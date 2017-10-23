@@ -12,22 +12,31 @@ def get_urls():
         return set(item[0] for item in cursor.fetchall())
 
 
-def get_number_topics():
+def get_number_topics(category=None):
     """Get just the number of topics from the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND "
-                       "article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;")
+        if category is None:
+            cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND "
+                           "article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;")
+        else:
+            cursor.execute("SELECT 1 FROM article, topic WHERE article.topic_id = topic.id AND article.category = ? AND"
+                           " article.topic_id IS NOT NULL GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
         return len(cursor.fetchall())
 
 
-def get_topics(page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
+def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLES_PER_PAGE):
     """Get the topics for the given page."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         start = page_number * articles_per_page
         end = (page_number + 1) * articles_per_page
-        cursor.execute("SELECT topic.name, topic.id, topic.image_url, count(*) FROM article, topic "
-                       "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
-        return sorted([{"title": item[0], "id": item[1], "image": item[2], "count": item[3]}
+        if category is None:
+            cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
+                           "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+        else:
+            cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
+                           "WHERE article.topic_id = topic.id AND topic.category = ? "
+                           "GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
+        return sorted([{"title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
 
 
