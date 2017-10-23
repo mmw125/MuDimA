@@ -12,3 +12,6 @@ gen
 
 # Database file
 mudima.db
+
+# Html Coverage
+htmlcov

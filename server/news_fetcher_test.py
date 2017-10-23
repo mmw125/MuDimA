@@ -1,7 +1,12 @@
+"""Tests the news fetcher."""
+
+import models
 import news_fetcher
 import unittest
 import mock
 import requests
+import database_utils
+import os
 
 
 # This method will be used by the mock to replace requests.get
@@ -21,6 +26,23 @@ def mocked_top_sources_get(*args, **kwargs):
 
 
 class NewsFetcherTest(unittest.TestCase):
+
+    def setUp(self):
+        """Set up the class for the tests."""
+        self._database_name_mock = mock.patch("server.database_utils.database_name", return_value="mudima_test.db")
+        self._database_name_mock.start()
+        self._database_location = database_utils.database_path(database_utils.database_name())
+        self._delete_database()
+
+    def tearDown(self):
+            """Tear down the class for the tests."""
+            self._delete_database()
+            self._database_name_mock.stop()
+
+    def _delete_database(self):
+            if os.path.exists(self._database_location):
+                os.remove(self._database_location)
+
     @mock.patch('requests.get', side_effect=mocked_sources_get)
     def test_get_sources(self, mock_get):
         self.source = news_fetcher.get_sources()[0]
@@ -74,3 +96,24 @@ class NewsFetcherTest(unittest.TestCase):
         self.assertEqual(self.top_headline.get_url(), None)
         self.assertEqual(self.top_headline.get_url_to_image(), None)
         self.assertEqual(self.top_headline.get_published_at(), None)
+    """Tests the news fetcher."""
+
+    def test_get_top_headlines(self):
+        """Ensure that the get top headlines doesn't crash."""
+        headlines = news_fetcher.get_top_headlines()
+        self.assertIsInstance(headlines, list)
+        for headline in headlines:
+            self.assertIsInstance(headline, models.Article)
+
+    def test_get_sources(self):
+        """Ensure that the get top headlines doesn't crash."""
+        sources = news_fetcher.get_sources()
+        self.assertIsInstance(sources, list)
+        for source in sources:
+            self.assertIsInstance(source, models.Source)
+
+    def test_parse_response_error(self):
+        """Test parse_response with an error message."""
+        response = {"status": "error", "message": "error_message"}
+        with self.assertRaises(news_fetcher.NewsApiError):
+            news_fetcher._parse_response(response)
