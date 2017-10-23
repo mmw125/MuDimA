@@ -27,6 +27,7 @@ class GroupingTest(unittest.TestCase):
     """Tests for the grouping class in the models file."""
 
     def test_combine_group(self):
+        """Test combining two groups."""
         g0 = models.Grouping(test_utils.SIMILAR_ARTICLES[0])
         g1 = models.Grouping(test_utils.SIMILAR_ARTICLES[1])
         g0.combine_group(g1)
