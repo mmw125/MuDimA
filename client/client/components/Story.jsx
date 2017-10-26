@@ -1,8 +1,9 @@
 import React from 'react';
 import ScatterPlot from './ScatterPlot.jsx';
+import stories from '../data/mock-stories.js'
 
 const styles = {
-  width   : '100%',
+  width   : 1080,
   height  : 1000,
   padding : 30,
 };
@@ -36,7 +37,7 @@ export default class Story extends React.Component {
         this.setState({
           isLoading: false,
           source: responseJson.articles,
-          data: randomDataSet(),
+          data: stories,
           title: responseJson.title
         })})
       .catch((error) => { console.error(error); });

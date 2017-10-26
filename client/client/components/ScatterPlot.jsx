@@ -1,7 +1,11 @@
 // unfinished/src/components/scatter-plot.jsx
 import React        from 'react';
-import DataCircles  from './DataCircles.jsx';
 
+// Returns the largest X coordinate from the data set
+const xMax   = (data)  => d3.max(data, (d) => d[0]);
+
+// Returns the highest Y coordinate from the data set
+const yMax   = (data)  => d3.max(data, (d) => d[1]);
 
 export default class ScatterPlot extends React.Component {
   constructor(props) {
@@ -15,19 +19,22 @@ export default class ScatterPlot extends React.Component {
 
   }
   handleMouseHover(e) {
+
     const d = {
+      name: e.target.getAttribute('name'),
+      link: e.target.getAttribute('link'),
       x: e.target.getAttribute('cx'),
       y: e.target.getAttribute('cy')
     }
     d3.select(e.target).attr({fill: "orange"});
 
     d3.select(this.refs.scatterPlot).append("text").attr({
-               id: "t" + d.x + "-" + d.y,  // Create an id for text so we can select it later for removing on mouseout
+               id: "t" + "hi",  // Create an id for text so we can select it later for removing on mouseout
                 x: function() { return d.x - 30; },
                 y: function() { return d.y - 15; }
             })
             .text(function() {
-              return [d.x, d.y];  // Value of the text
+              return [d.name, d.link];  // Value of the text
             });
   }
   handleMouseOut(e) {
@@ -36,26 +43,40 @@ export default class ScatterPlot extends React.Component {
       y: e.target.getAttribute('cy')
     }
     d3.select(e.target).attr({fill: "black"});
-    d3.select("#t" + d.x + "-" + d.y).remove();
+    d3.select("#t" + "hi").remove();
   }
+  xScale() {
+    return d3.scale.pow()
+      .domain([-1, 1])
+      .range([this.props.padding, this.props.width - this.props.padding])
+      .exponent(2);
+  };
+  yScale() {
+    return d3.scale.pow()
+      .domain([-1, 1])
+      .range([this.props.height - this.props.padding, this.props.padding])
+      .exponent(2);
+  };
   renderCircles() {
-    return (coords, index) => {
+    return (story, index) => {
+      const coords = [story['x'], story['y']]
       console.log(coords);
       console.log(index);
       const circleProps = {
-        cx: coords[0],
-        cy: coords[1],
+        name: story['name'],
+        cx: this.xScale()(coords[0]),
+        cy: this.yScale()(coords[1]),
         r: 10,
         key: index
       };
-      return <circle onMouseOut={this.handleMouseOut.bind(this)} onMouseOver={this.handleMouseHover.bind(this)} {...circleProps} />;
+      return <circle href={circleProps.link} onMouseOut={this.handleMouseOut.bind(this)} onMouseOver={this.handleMouseHover.bind(this)} {...circleProps} />;
     };
   }
   render() {
-  return (
-      <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
-        <g>{ this.props.data.map(this.renderCircles(this.props)) }</g>
-      </svg>
-    );
+    return (
+        <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
+          <g>{ this.props.data.map(this.renderCircles(this.props)) }</g>
+        </svg>
+      );
   }
 }
