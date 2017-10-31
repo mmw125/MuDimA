@@ -1,5 +1,7 @@
-python-dateutil
 Flask
 flask-cors
-requests
 newspaper
+python-dateutil
+requests
+scipy
+sklearn
