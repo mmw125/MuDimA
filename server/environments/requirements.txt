@@ -3,5 +3,4 @@ flask-cors
 newspaper
 python-dateutil
 requests
-scipy
 sklearn

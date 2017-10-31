@@ -2,7 +2,6 @@
 
 import collections
 import newspaper
-import scipy
 import uuid
 
 from datetime import date
