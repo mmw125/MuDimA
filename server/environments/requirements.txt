@@ -5,3 +5,4 @@ newspaper
 python-dateutil
 requests
 sklearn
+scipy
