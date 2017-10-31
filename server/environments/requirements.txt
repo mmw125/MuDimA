@@ -4,5 +4,4 @@ nltk>=3.2.1
 newspaper
 python-dateutil
 requests
-sklearn
-scipy
+scikit-learn[alldeps]
