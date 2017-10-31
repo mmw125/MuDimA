@@ -277,7 +277,6 @@ class Grouping(object):
         pos = mds.fit_transform(euclidean_distances(matrix, matrix))
         return [(article, pos[i]) for i, article in enumerate(self.get_articles())]
 
-
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
 
