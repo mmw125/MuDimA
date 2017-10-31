@@ -271,6 +271,13 @@ class Grouping(object):
         return largest_key
 
     def calculate_fit(self):
+        """Calculate the fit for the articles in the grouping."""
+        if len(self.get_articles()) == 0:
+            return []
+        if len(self.get_articles()) == 1:
+            return [(self.get_articles()[0], [0, 0])]
+        if len(self.get_articles()) != len([a for a in self.get_articles() if a.get_keywords()]):
+            return [(article, (0, 0)) for article in self.get_articles()]
         article_text = [article.get_text() for article in self.get_articles()]
         matrix = TfidfVectorizer().fit_transform(article_text)
         mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
