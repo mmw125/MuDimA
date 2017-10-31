@@ -1,6 +1,6 @@
 Flask
 flask-cors
-nltk
+nltk>=3.2.1
 newspaper
 python-dateutil
 requests
