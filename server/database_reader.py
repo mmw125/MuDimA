@@ -46,8 +46,8 @@ def get_stories_for_topic(topic_id):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
         cursor.execute("SELECT name, link, image_url, fit_x, fit_y FROM article WHERE topic_id=?", (topic_id,))
-        return {"title": title, "articles": [{"title": item[0], "url": item[1], "image": item[2],
-                                              "fit": (item[3], item[4])} for item in cursor.fetchall()]}
+        return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2],
+                                              "x": item[3], "y": item[4]} for item in cursor.fetchall()]}
 
 
 def get_grouped_articles():
