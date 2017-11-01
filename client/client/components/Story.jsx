@@ -37,7 +37,7 @@ export default class Story extends React.Component {
         this.setState({
           isLoading: false,
           source: responseJson.articles,
-          data: stories,
+          data: responseJson.articles,
           title: responseJson.title
         })})
       .catch((error) => { console.error(error); });

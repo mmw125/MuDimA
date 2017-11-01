@@ -30,7 +30,7 @@ export default class Home extends React.Component {
     }
     return (
       <div className="row">
-        {this.state.topics.map(storyData => <StoryCard url={storyData.image} name={storyData.title} id={storyData.id} count={storyData.count} {...storyData} />)}
+        {this.state.topics.map(storyData => <StoryCard key={storyData.id} url={storyData.image} name={storyData.title} id={storyData.id} count={storyData.count} {...storyData} />)}
       </div>
       );
   }
