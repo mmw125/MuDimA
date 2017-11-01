@@ -73,5 +73,5 @@ setup(
         'update_database': UpdateDatabaseCommand,
         'test': TestCommand,
     },
-
+    install_requires=[read("server/environments/requirements.txt".split("\n"))],
 )

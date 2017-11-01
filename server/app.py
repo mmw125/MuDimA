@@ -28,7 +28,7 @@ def get_sources():
 def get_topics():
     """Get the topics."""
     page_number = int(request.args.get("p", 0))
-    category = int(request.args.get("category", None))
+    category = request.args.get("category", None)
     return json.dumps(database_reader.get_topics(page_number=page_number, category=category))
 
 

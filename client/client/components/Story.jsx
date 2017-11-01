@@ -33,7 +33,7 @@ export default class Story extends React.Component {
       <div className="row">
           <h1>{this.state.title}</h1>
         <ul>
-        {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
+        {this.state.source.map(storyData => <li><a href={storyData.url}>{storyData.title}</a></li>)}
         </ul>
       </div>
 

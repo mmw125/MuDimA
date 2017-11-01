@@ -1,5 +1,7 @@
-python-dateutil
 Flask
 flask-cors
-requests
+nltk>=3.2.1
 newspaper
+python-dateutil
+requests
+scikit-learn[alldeps]

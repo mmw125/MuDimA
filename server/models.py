@@ -9,6 +9,10 @@ from dateutil import parser
 
 from lxml import etree
 
+from sklearn import manifold
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 class Article:
     """Represents an article."""
@@ -265,6 +269,20 @@ class Grouping(object):
             if value > largest_value:
                 largest_key = key
         return largest_key
+
+    def calculate_fit(self):
+        """Calculate the fit for the articles in the grouping."""
+        if len(self.get_articles()) == 0:
+            return []
+        if len(self.get_articles()) == 1:
+            return [(self.get_articles()[0], [0, 0])]
+        if len(self.get_articles()) != len([a for a in self.get_articles() if a.get_keywords()]):
+            return [(article, (0, 0)) for article in self.get_articles()]
+        article_text = [article.get_text() for article in self.get_articles()]
+        matrix = TfidfVectorizer().fit_transform(article_text)
+        mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
+        pos = mds.fit_transform(euclidean_distances(matrix, matrix))
+        return [(article, pos[i]) for i, article in enumerate(self.get_articles())]
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
