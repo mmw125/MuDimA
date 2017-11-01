@@ -1,5 +1,6 @@
 """All of the models that are used throughout the program."""
 
+import collections
 import newspaper
 import uuid
 
@@ -13,12 +14,13 @@ class Article:
     """Represents an article."""
 
     @staticmethod
-    def create_from_dict(article_dict):
+    def create_from_dict(article_dict, **kwargs):
         """Create an article from a dict."""
+        article_dict.update(kwargs)
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
-                 text=None, in_database=False, keywords=None):
+                 text=None, in_database=False, keywords=None, category=None):
         self.description = description
         self.title = title
         self.url = url
@@ -37,6 +39,7 @@ class Article:
         self.keywords = None
         self.set_keywords(keywords)
         self._in_database = in_database
+        self.category = category
 
     def get_description(self):
         """Get description."""
@@ -122,6 +125,10 @@ class Article:
         """Set if the article thinks it is in the database."""
         self._in_database = in_database
 
+    def get_category(self):
+        """Get the category of the article."""
+        return self.category
+
     def __str__(self):  # pragma: no cover
         return " ".join((self.title, self.url)).encode("utf-8")
 
@@ -177,6 +184,7 @@ class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
 
     def __init__(self, article, in_database=False):
+        assert isinstance(article, Article)
         self._articles = [article]
         self._uuid = None
         self._in_database = in_database
@@ -184,6 +192,7 @@ class Grouping(object):
 
     def add_article(self, article):
         """Add the new article from the list."""
+        assert isinstance(article, Article)
         self._articles.append(article)
 
     def get_articles(self):
@@ -245,6 +254,17 @@ class Grouping(object):
     def set_in_database(self, in_database):
         """Set if group in database."""
         self._in_database = in_database
+
+    def get_category(self):
+        """Get group's category."""
+        categories = collections.defaultdict(int)
+        for article in self._articles:
+            categories[article.get_category()] += 1
+        largest_key, largest_value = 0, None
+        for key, value in categories.iteritems():
+            if value > largest_value:
+                largest_key = key
+        return largest_key
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
