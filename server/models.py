@@ -2,6 +2,7 @@
 
 import collections
 import newspaper
+import re
 import uuid
 
 from datetime import date
@@ -12,6 +13,8 @@ from lxml import etree
 from sklearn import manifold
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+title_cleaner = re.compile("<.*?>")
 
 
 class Article:
@@ -26,7 +29,7 @@ class Article:
     def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
                  text=None, in_database=False, keywords=None, category=None):
         self.description = description
-        self.title = title
+        self.title = re.sub(title_cleaner, "", title)
         self.url = url
         self.author = author
         if publishedAt:

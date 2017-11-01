@@ -53,11 +53,11 @@ def get_stories_for_topic(topic_id):
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, topic_id, link FROM article")
+        cursor.execute("SELECT name, keywords, topic_id, link, article_text FROM article")
         groups = {}
         for item in cursor.fetchall():
-            name, keywords, id, url = item
-            article = models.Article(url=url, title=name, in_database=True)
+            name, keywords, id, url, article_text = item
+            article = models.Article(url=url, title=name, in_database=True, text=article_text)
             article.set_keywords(keywords)
             if id in groups:
                 groups.get(id).add_article(article)
