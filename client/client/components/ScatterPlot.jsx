@@ -19,7 +19,6 @@ export default class ScatterPlot extends React.Component {
 
   }
   handleMouseHover(e) {
-
     const d = {
       name: e.target.getAttribute('name'),
       link: e.target.getAttribute('link'),
@@ -45,6 +44,9 @@ export default class ScatterPlot extends React.Component {
     d3.select(e.target).attr({fill: "black"});
     d3.select("#t" + "hi").remove();
   }
+  handleMouseClick(e) {
+    window.open(e.target.getAttribute('href'), '_blank');
+  }
   xScale() {
     return d3.scale.pow()
       .domain([-1, 1])
@@ -63,13 +65,14 @@ export default class ScatterPlot extends React.Component {
       console.log(coords);
       console.log(index);
       const circleProps = {
+        href: story['link'],
         name: story['name'],
         cx: this.xScale()(coords[0]),
         cy: this.yScale()(coords[1]),
         r: 10,
         key: index
       };
-      return <circle href={circleProps.link} onMouseOut={this.handleMouseOut.bind(this)} onMouseOver={this.handleMouseHover.bind(this)} {...circleProps} />;
+      return <circle href={circleProps.link} onMouseOut={this.handleMouseOut.bind(this)} onMouseOver={this.handleMouseHover.bind(this)} onClick={this.handleMouseClick.bind(this)} {...circleProps} />;
     };
   }
   render() {
