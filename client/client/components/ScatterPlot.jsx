@@ -53,6 +53,16 @@ export default class ScatterPlot extends React.Component {
 
     handleMouseClick(e) {
         window.open(e.target.getAttribute('href'), '_blank');
+        fetch('http://localhost/userClick', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                url: e.target.getAttribute('href'),
+            })
+        });
     }
 
     xScale() {

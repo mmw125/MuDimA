@@ -22,7 +22,7 @@ def write_topics_to_database(grouping_list):
                                     grouping.get_uuid(), fit[0], fit[1]))
                     article.set_in_database(True)
                 else:
-                    cursor.execute("""UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?""",
+                    cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
                                    (fit[0], fit[1], article.get_url()))
             connection.commit()
 
@@ -45,6 +45,13 @@ def _remove_group_ids_from_database(group_ids):
         for group_id in group_ids:
             cursor.execute("""DELETE FROM topic WHERE id = ?""", (group_id,))
             cursor.execute("""DELETE FROM article WHERE topic_id = ?""", (group_id,))
+        connection.commit()
+
+
+def mark_item_as_clicked(url):
+    """Marks the article as visited by incrementing its popularity."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("UPDATE article SET popularity = popularity + 1 WHERE link = ?", (url,))
         connection.commit()
 
 
