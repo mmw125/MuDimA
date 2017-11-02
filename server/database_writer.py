@@ -16,7 +16,7 @@ def write_topics_to_database(grouping_list):
             for article, fit in grouping.calculate_fit():
                 if not article.in_database():
                     cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text,
-                                   topic_id, fit_x, fit_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                   topic_id, fit_x, fit_y, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)""",
                                    (article.get_title(), article.get_url(), article.get_url_to_image(),
                                     " ".join(article.get_keywords()), article.get_published_at(), article.get_text(),
                                     grouping.get_uuid(), fit[0], fit[1]))
