@@ -89,7 +89,7 @@ export default class ScatterPlot extends React.Component {
                 name: story['name'],
                 cx: this.xScale()(coords[0]),
                 cy: this.yScale()(coords[1]),
-                r: 10,
+                r: 8 + story['popularity'] / 5,
                 key: index
             };
             return <circle href={circleProps.link} onMouseOut={this.handleMouseOut.bind(this)}
