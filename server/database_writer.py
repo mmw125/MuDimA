@@ -49,7 +49,7 @@ def _remove_group_ids_from_database(group_ids):
 
 
 def mark_item_as_clicked(url):
-    """Marks the article as visited by incrementing its popularity."""
+    """Mark the article as visited by incrementing its popularity."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("UPDATE article SET popularity = popularity + 1 WHERE link = ?", (url,))
         connection.commit()

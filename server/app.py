@@ -50,6 +50,7 @@ def get_stories_for_topic():
 
 @app.route("/userClick", methods=['POST'])
 def user_click():
+    """Update the popularity when the user clicks on an article."""
     data = json.loads(request.data)
     if "url" in data:
         database_writer.mark_item_as_clicked(data["url"])
