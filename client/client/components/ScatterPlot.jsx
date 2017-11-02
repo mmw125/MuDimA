@@ -82,8 +82,6 @@ export default class ScatterPlot extends React.Component {
     renderCircles() {
         return (story, index) => {
             const coords = [story['x'], story['y']]
-            console.log(coords);
-            console.log(index);
             const circleProps = {
                 href: story['link'],
                 name: story['name'],
