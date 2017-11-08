@@ -273,6 +273,10 @@ class Grouping(object):
                 largest_key = key
         return largest_key
 
+    def has_new_articles(self):
+        """Return true if the grouping has any articles that are not in the database."""
+        return any(not a.in_database() for a in self.get_articles())
+
     def calculate_fit(self):
         """Calculate the fit for the articles in the grouping."""
         if len(self.get_articles()) == 0:

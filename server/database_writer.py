@@ -13,17 +13,19 @@ def write_topics_to_database(grouping_list):
                                (grouping.get_title(), grouping.get_uuid(),
                                 grouping.get_image_url(), grouping.get_category()))
                 grouping.set_in_database(True)
-            for article, fit in grouping.calculate_fit():
-                if not article.in_database():
-                    cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text,
-                                   topic_id, fit_x, fit_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                                   (article.get_title(), article.get_url(), article.get_url_to_image(),
-                                    " ".join(article.get_keywords()), article.get_published_at(), article.get_text(),
-                                    grouping.get_uuid(), fit[0], fit[1]))
-                    article.set_in_database(True)
-                else:
-                    cursor.execute("""UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?""",
-                                   (fit[0], fit[1], article.get_url()))
+            if grouping.has_new_articles():
+                for article, fit in grouping.calculate_fit():
+                    if not article.in_database():
+                        cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text,
+                                     topic_id, fit_x, fit_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                       (article.get_title(), article.get_url(), article.get_url_to_image(),
+                                        " ".join(article.get_keywords()), article.get_published_at(),
+                                        article.get_text(),
+                                        grouping.get_uuid(), fit[0], fit[1]))
+                        article.set_in_database(True)
+                    else:
+                        cursor.execute("""UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?""",
+                                       (fit[0], fit[1], article.get_url()))
             connection.commit()
 
 
