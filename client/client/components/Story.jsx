@@ -29,7 +29,6 @@ export default class Story extends React.Component {
   }
 
   getSources() {
-    console.log(this.props.match.params.id);
     return fetch('http://localhost/getStories?topic_id=' + this.props.match.params.id)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -52,18 +51,11 @@ export default class Story extends React.Component {
       );
     }
     return (
-
       <div className="row">
         <h1>{this.state.title}</h1>
         <ScatterPlot {...this.state} {...styles} />
-
-
-
-
-
       </div>
-
-      );
+    );
   }
   // <ul>
   // {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
