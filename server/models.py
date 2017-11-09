@@ -48,7 +48,7 @@ class Article:
         self._in_database = in_database
         self.category = category
 
-    def get_description(self):
+    def get_description(self):  # pragma: no cover
         """Get description."""
         return self.description
 
@@ -60,7 +60,7 @@ class Article:
         """Get url."""
         return self.url
 
-    def get_author(self):
+    def get_author(self):  # pragma: no cover
         """Get author's name."""
         return self.author
 
@@ -68,11 +68,11 @@ class Article:
         """Get published date and time."""
         return self.publishedAt
 
-    def get_source(self):
+    def get_source(self):  # pragma: no cover
         """Get the source for the article."""
         return Source(self.source)
 
-    def get_url_to_image(self):
+    def get_url_to_image(self):  # pragma: no cover
         """Get description."""
         return self.urlToImage
 
@@ -155,31 +155,31 @@ class Source:
         self._language = source.get("language")
         self._country = source.get("country")
 
-    def get_id(self):
+    def get_id(self):  # pragma: no cover
         """Get source id."""
         return self._id
 
-    def get_name(self):
+    def get_name(self):  # pragma: no cover
         """Get source name."""
         return self._name
 
-    def get_description(self):
+    def get_description(self):  # pragma: no cover
         """Get source description."""
         return self._description
 
-    def get_url(self):
+    def get_url(self):  # pragma: no cover
         """Get source url."""
         return self._url
 
-    def get_category(self):
+    def get_category(self):  # pragma: no cover
         """Get source category."""
         return self._category
 
-    def get_language(self):
+    def get_language(self):  # pragma: no cover
         """Get source language."""
         return self._language
 
-    def get_country(self):
+    def get_country(self):  # pragma: no cover
         """Get source country."""
         return self._country
 

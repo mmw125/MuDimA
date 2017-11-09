@@ -18,10 +18,10 @@ def update_stories():
     news_fetcher.update_database()
 
 
-@app.route("/getSources")
-def get_sources():
-    """Get the sources."""
-    return json.dumps([source.__dict__ for source in news_fetcher.get_sources(language="en")])
+# @app.route("/getSources")
+# def get_sources():
+#     """Get the sources."""
+#     return json.dumps([source.__dict__ for source in news_fetcher.get_sources(language="en")])
 
 
 @app.route("/getTopics")
