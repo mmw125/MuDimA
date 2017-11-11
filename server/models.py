@@ -95,9 +95,11 @@ class Article:
 
     def get_text(self):
         """Get the text of the article."""
-        if self.article is None:
-            self._init_article()
-        return self.article.text
+        if self.text is None:
+            if self.article is None:
+                self._init_article()
+            self.text = self.article.text
+        return self.text
 
     def set_keywords(self, keywords):
         """Set the keywords for the article."""
