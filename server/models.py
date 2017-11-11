@@ -17,6 +17,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 title_cleaner = re.compile("<.*?>")
 
 
+def calculate_fit(article_list):
+    article_text = [article.get_text() for article in article_list if article.get_text()]
+    matrix = TfidfVectorizer().fit_transform(article_text)
+    mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
+    pos = mds.fit_transform(euclidean_distances(matrix, matrix))
+    return zip(article_list, pos)
+
+
 class Article:
     """Represents an article."""
 
@@ -281,11 +289,8 @@ class Grouping(object):
             return [(self.get_articles()[0], [0, 0])]
         if len(self.get_articles()) != len([a for a in self.get_articles() if a.get_keywords()]):
             return [(article, (0, 0)) for article in self.get_articles()]
-        article_text = [article.get_text() for article in self.get_articles()]
-        matrix = TfidfVectorizer().fit_transform(article_text)
-        mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
-        pos = mds.fit_transform(euclidean_distances(matrix, matrix))
-        return [(article, pos[i]) for i, article in enumerate(self.get_articles())]
+        return calculate_fit(self.get_articles())
+
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
