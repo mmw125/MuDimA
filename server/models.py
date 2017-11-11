@@ -200,17 +200,20 @@ class Source:
 class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
 
-    def __init__(self, article, in_database=False):
+    def __init__(self, article, uuid=None, in_database=False, has_new_articles=True):
         assert isinstance(article, Article)
         self._articles = [article]
-        self._uuid = None
+        self._uuid = uuid
         self._in_database = in_database
         self._has_uuid = False
+        self._new_articles = [article] if has_new_articles else []
 
-    def add_article(self, article):
+    def add_article(self, article, new_article=True):
         """Add the new article from the list."""
         assert isinstance(article, Article)
         self._articles.append(article)
+        if new_article:
+            self._new_articles.append(article)
 
     def get_articles(self):
         """Get the article in the grouping."""
@@ -293,6 +296,17 @@ class Grouping(object):
             return [(article, (0, 0)) for article in self.get_articles()]
         return calculate_fit(self.get_articles())
 
+    def get_new_articles(self):
+        """Check if the grouping has new articles in it."""
+        return self._new_articles
+
+    def has_new_articles(self):
+        """Check if the grouping has new articles in it."""
+        return bool(self._new_articles)
+
+    def clean_new_articles(self):
+        """Empty the new article list."""
+        self._new_articles = []
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
