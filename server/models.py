@@ -34,8 +34,8 @@ class Article:
         article_dict.update(kwargs)
         return Article(**article_dict)
 
-    def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
-                 text=None, in_database=False, keywords=None, category=None):
+    def __init__(self, url, description="", title="", author="", publishedAt="", source=None, urlToImage="",
+                 text=None, keywords=None, category=None):
         self.description = description
         self.title = re.sub(title_cleaner, "", title)
         self.url = url
@@ -47,13 +47,12 @@ class Article:
                 self.publishedAt = date.today()
         else:
             self.publishedAt = date.today()
-        self.source = source
+        self.source = source if source is not None else {}
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
         self.keywords = None
         self.set_keywords(keywords)
-        self._in_database = in_database
         self.category = category
 
     def get_description(self):
