@@ -1,10 +1,25 @@
 """Functions that write to the database."""
 
 import constants
+import database_reader
 import database_utils
+import models
 
 
-def write_topics_to_database(grouping_list):
+def write_articles(article_list, debug=False):
+    """Write articles in the article list into the database."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        for i, article in enumerate(article_list):
+            if debug:
+                print "adding article", i, "out of", len(article_list)
+            cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text) 
+                              VALUES (?, ?, ?, ?, ?, ?)""",
+                           (article.get_title(), article.get_url(), article.get_url_to_image(),
+                            " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
+            connection.commit()
+
+
+def write_topics(grouping_list):
     """Write groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
@@ -13,18 +28,29 @@ def write_topics_to_database(grouping_list):
                                (grouping.get_title(), grouping.get_uuid(),
                                 grouping.get_image_url(), grouping.get_category()))
                 grouping.set_in_database(True)
-            for article, fit in grouping.calculate_fit():
-                if not article.in_database():
-                    cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text,
-                                   topic_id, fit_x, fit_y, popularity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)""",
-                                   (article.get_title(), article.get_url(), article.get_url_to_image(),
-                                    " ".join(article.get_keywords()), article.get_published_at(), article.get_text(),
-                                    grouping.get_uuid(), fit[0], fit[1]))
-                    article.set_in_database(True)
-                else:
-                    cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
-                                   (fit[0], fit[1], article.get_url()))
+            for article in grouping.get_new_articles():
+                cursor.execute("UPDATE article SET topic_id = ? WHERE link = ?",
+                               (grouping.get_uuid(), article.get_url()))
             connection.commit()
+
+
+def write_group_fits(grouping_list):
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        for grouping in grouping_list:
+            if grouping.has_new_articles():
+                for article, fit in grouping.calculate_fit():
+                    cursor.execute("UPDATE article SET group_fit_x = ?, group_fit_y = ? WHERE link = ?",
+                                   (fit[0], fit[1], article.get_url()))
+
+
+def write_overall_fits(grouping_list=None):
+    grouping_list = database_reader.get_grouped_articles() if grouping_list is None else grouping_list
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        articles = [article for grouping in grouping_list for article in grouping.get_articles()]
+        for article, fit in models.calculate_fit(articles):
+            cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
+                           (fit[0], fit[1], article.get_url()))
+        connection.commit()
 
 
 def remove_grouping_from_database(grouping):

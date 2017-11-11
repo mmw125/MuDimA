@@ -62,11 +62,11 @@ def get_top_headlines(sources=list(), q=list(), category="", language=default_la
         return _parse_response(response, category=category)
 
 
-def get_sources(language=default_language, category="", country=""):
-    """Get the available sources from the news api."""
-    url = _build_url("sources", {"language": language, "category": category, "country": country})
-    response = requests.get(url)
-    return _parse_response(response)
+# def get_sources(language=default_language, category="", country=""):
+#     """Get the available sources from the news api."""
+#     url = _build_url("sources", {"language": language, "category": category, "country": country})
+#     response = requests.get(url)
+#     return _parse_response(response)
 
 
 def update_database():
@@ -74,5 +74,8 @@ def update_database():
     articles = get_top_headlines(add_category_information=True)
     urls_in_database = database_reader.get_urls()
     articles = [article for article in articles if article.get_url() not in urls_in_database]
+    database_writer.write_articles(articles, debug=True)
     grouped = classifier.group_articles(articles, debug=True)
-    database_writer.write_topics_to_database(grouped)
+    database_writer.write_topics(grouped)
+    database_writer.write_group_fits(grouped)
+    database_writer.write_overall_fits()

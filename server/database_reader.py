@@ -52,19 +52,30 @@ def get_stories_for_topic(topic_id):
                                              for item in cursor.fetchall()]}
 
 
+def get_ungrouped_articles():
+    """Get the items in the database and puts them into Article and Grouping objects."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT name, keywords, link, article_text FROM article "
+                       "WHERE article_text != '' and topic_id is NULL;")
+        articles = []
+        for item in cursor.fetchall():
+            name, keywords, url, article_text = item
+            articles.append(models.Article(url=url, title=name, text=article_text, keywords=keywords))
+        return articles
+
+
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, topic_id, link, article_text FROM article")
+        cursor.execute("SELECT name, keywords, topic_id, link, article_text FROM article "
+                       "WHERE article_text != '' AND topic_id IS NOT NULL;")
         groups = {}
         for item in cursor.fetchall():
             name, keywords, id, url, article_text = item
-            article = models.Article(url=url, title=name, in_database=True, text=article_text)
+            article = models.Article(url=url, title=name, text=article_text)
             article.set_keywords(keywords)
             if id in groups:
-                groups.get(id).add_article(article)
+                groups.get(id).add_article(article, new_article=False)
             else:
-                group = models.Grouping(article, in_database=True)
-                group.set_uuid(id)
-                groups[id] = group
+                groups[id] = models.Grouping(article, uuid=id, in_database=True, has_new_articles=False)
         return list(groups.values())
