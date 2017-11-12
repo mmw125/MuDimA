@@ -204,7 +204,7 @@ class Grouping(object):
         self._articles = [article]
         self._uuid = uuid
         self._in_database = in_database
-        self._has_uuid = False
+        self._has_uuid = uuid is not None
         self._new_articles = [article] if has_new_articles else []
 
     def add_article(self, article, new_article=True):

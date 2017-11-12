@@ -65,6 +65,21 @@ def get_ungrouped_articles():
         return articles
 
 
+def get_groups_with_unfit_articles():
+    """Get the ids of the groups in the database that have articles that are not fit."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL "
+                       "GROUP BY topic_id;")
+        return [i[0] for i in cursor.fetchall()]
+
+
+def get_number_articles_without_overall_fit():
+    """Get the number of articles in the database without an overall fit."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL;")
+        return len(cursor.fetchall())
+
+
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):

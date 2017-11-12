@@ -19,7 +19,7 @@ def write_articles(article_list, debug=False):
             connection.commit()
 
 
-def write_topics(grouping_list):
+def write_groups(grouping_list=None, debug=False):
     """Write groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
@@ -34,22 +34,32 @@ def write_topics(grouping_list):
             connection.commit()
 
 
-def write_group_fits(grouping_list):
+def write_group_fits(grouping_list=None):
+    """Write the group fits into the database."""
+    if grouping_list is None:
+        group_ids = [str(id) for id in database_reader.get_groups_with_unfit_articles()]
+        grouping_list = [group for group in database_reader.get_grouped_articles() if group.get_uuid() in group_ids]
     with database_utils.DatabaseConnection() as (connection, cursor):
-        for grouping in grouping_list:
-            if grouping.has_new_articles():
-                for article, fit in grouping.calculate_fit():
-                    cursor.execute("UPDATE article SET group_fit_x = ?, group_fit_y = ? WHERE link = ?",
-                                   (fit[0], fit[1], article.get_url()))
+        for i, grouping in enumerate(grouping_list):
+            print "Writing group fit", i, "out of", len(grouping_list)
+            for article, fit in grouping.calculate_fit():
+                cursor.execute("UPDATE article SET group_fit_x = ?, group_fit_y = ? WHERE link = ?",
+                               (fit[0], fit[1], article.get_url()))
+                connection.commit()
 
 
 def write_overall_fits(grouping_list=None):
+    """Write overall fits into the database."""
     grouping_list = database_reader.get_grouped_articles() if grouping_list is None else grouping_list
     with database_utils.DatabaseConnection() as (connection, cursor):
         articles = [article for grouping in grouping_list for article in grouping.get_articles()]
-        for article, fit in models.calculate_fit(articles):
+        fits = models.calculate_fit(articles, max_iter=500)
+        i = 1
+        for article, fit in fits:
+            print "Updating fit", i, "out of", len(fits)
             cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
                            (fit[0], fit[1], article.get_url()))
+            i += 1
         connection.commit()
 
 
@@ -83,7 +93,6 @@ def mark_item_as_clicked(url):
 
 def clean_database():
     """Remove articles from the database when they are old."""
-    groups_to_remove = []
     with database_utils.DatabaseConnection() as (connection, cursor):
         # Remove all of the topics with no topic and
         cursor.execute("DELETE FROM article WHERE article.topic_id IS NULL "
@@ -96,5 +105,7 @@ def clean_database():
                        "AND julianday(CURRENT_TIMESTAMP) - julianday(date) <= ?)",
                        (constants.ARTICLE_REPLACEMENT_TIME,))
         groups_to_remove = [item[0] for item in cursor.fetchall()]
+        if groups_to_remove:
+            print "Removing", len(groups_to_remove), "groups"
         connection.commit()
     _remove_group_ids_from_database(groups_to_remove)
