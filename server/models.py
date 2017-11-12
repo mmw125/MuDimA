@@ -18,6 +18,7 @@ title_cleaner = re.compile("<.*?>")
 
 
 def calculate_fit(article_list, max_iter=3000):
+    """Calculates the fit for the articles in the list."""
     article_text = [article.get_text() for article in article_list if article.get_text()]
     matrix = TfidfVectorizer().fit_transform(article_text)
     mds = manifold.MDS(n_components=2, max_iter=max_iter, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
@@ -35,7 +36,7 @@ class Article:
         return Article(**article_dict)
 
     def __init__(self, url, description="", title="", author="", publishedAt="", source=None, urlToImage="",
-                 text=None, keywords=None, category=None):
+                 text=None, keywords=None, category=None, in_database=False):
         self.description = description
         self.title = re.sub(title_cleaner, "", title)
         self.url = url
@@ -54,6 +55,7 @@ class Article:
         self.keywords = None
         self.set_keywords(keywords)
         self.category = category
+        self._in_database = in_database
 
     def get_description(self):
         """Get description."""

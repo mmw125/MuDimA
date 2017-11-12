@@ -88,7 +88,7 @@ def get_grouped_articles():
         groups = {}
         for item in cursor.fetchall():
             name, keywords, id, url, article_text, image_url = item
-            article = models.Article(url=url, title=name, text=article_text, urlToImage=image_url)
+            article = models.Article(url=url, title=name, text=article_text, urlToImage=image_url, in_database=True)
             article.set_keywords(keywords)
             if id in groups:
                 groups.get(id).add_article(article, new_article=False)

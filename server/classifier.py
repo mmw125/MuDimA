@@ -7,7 +7,7 @@ import models
 
 
 def group_articles(article_list=None, debug=False):
-    """Groups good articles in the database."""
+    """Group good articles in the database."""
     if article_list is None:
         article_list = database_reader.get_ungrouped_articles()
     else:

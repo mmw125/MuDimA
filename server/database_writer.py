@@ -6,20 +6,24 @@ import database_utils
 import models
 
 
-def write_articles(article_list, debug=False):
+def _write_article(article, connection, cursor):
+    cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text)
+                                  VALUES (?, ?, ?, ?, ?, ?)""",
+                   (article.get_title(), article.get_url(), article.get_url_to_image(),
+                    " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
+    article.set_in_database(True)
+    connection.commit()
+
+
+def write_articles(article_list):
     """Write articles in the article list into the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for i, article in enumerate(article_list):
-            if debug:
-                print "adding article", i, "out of", len(article_list)
-            cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text) 
-                              VALUES (?, ?, ?, ?, ?, ?)""",
-                           (article.get_title(), article.get_url(), article.get_url_to_image(),
-                            " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
-            connection.commit()
+            print "adding article", i, "out of", len(article_list)
+            _write_article(article, connection, cursor)
 
 
-def write_groups(grouping_list=None, debug=False):
+def write_groups(grouping_list=None):
     """Write groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for grouping in grouping_list:
@@ -29,6 +33,8 @@ def write_groups(grouping_list=None, debug=False):
                                 grouping.get_image_url(), grouping.get_category()))
                 grouping.set_in_database(True)
             for article in grouping.get_new_articles():
+                if not article.in_database():
+                    _write_article(article, connection, cursor)
                 cursor.execute("UPDATE article SET topic_id = ? WHERE link = ?",
                                (grouping.get_uuid(), article.get_url()))
             connection.commit()

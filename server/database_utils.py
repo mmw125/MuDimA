@@ -15,7 +15,7 @@ def database_path(name):
 
 
 class DatabaseConnection:
-    """Handles the connection to the database."""
+    """Handle the connection to the database."""
 
     def __init__(self, path=None, refresh=False):
         db_path = database_path(path if path else database_name())
@@ -29,7 +29,7 @@ class DatabaseConnection:
             self._create_tables()
 
     def _create_tables(self):
-        self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT, 
+        self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT,
                                category TEXT, fit_x DOUBLE, fit_y DOUBLE)""")
         self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT PRIMARY KEY, image_url TEXT,
                                article_text TEXT, keywords TEXT, topic_id TEXT, date DATETIME,
