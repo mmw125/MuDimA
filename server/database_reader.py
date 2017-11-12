@@ -68,12 +68,12 @@ def get_ungrouped_articles():
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, topic_id, link, article_text FROM article "
+        cursor.execute("SELECT name, keywords, topic_id, link, article_text, image_url FROM article "
                        "WHERE article_text != '' AND topic_id IS NOT NULL;")
         groups = {}
         for item in cursor.fetchall():
-            name, keywords, id, url, article_text = item
-            article = models.Article(url=url, title=name, text=article_text)
+            name, keywords, id, url, article_text, image_url = item
+            article = models.Article(url=url, title=name, text=article_text, urlToImage=image_url)
             article.set_keywords(keywords)
             if id in groups:
                 groups.get(id).add_article(article, new_article=False)
