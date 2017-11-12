@@ -83,3 +83,4 @@ def update_database():
     database_writer.write_overall_fits(debug=True)
     if database_reader.get_number_articles_without_overall_fit() > constants.ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED:
         print "Not enough new articles"
+    database_writer.update_topic_pictures()

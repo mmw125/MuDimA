@@ -91,6 +91,18 @@ def mark_item_as_clicked(url):
         connection.commit()
 
 
+def update_topic_pictures():
+    """Mark the article as visited by incrementing its popularity."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT id FROM topic WHERE image_url IS NULL")
+        for id in [item[0] for item in cursor.fetchall()]:
+            cursor.execute("SELECT image_url FROM article WHERE topic_id = ? AND image_url IS NOT NULL", (id,))
+            item = cursor.fetchone()
+            if item:
+                cursor.execute("UPDATE topic SET image_url = ? WHERE id = ?", (item[0], id))
+        connection.commit()
+
+
 def clean_database():
     """Remove articles from the database when they are old."""
     with database_utils.DatabaseConnection() as (connection, cursor):
