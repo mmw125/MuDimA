@@ -17,10 +17,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 title_cleaner = re.compile("<.*?>")
 
 
-def calculate_fit(article_list):
+def calculate_fit(article_list, max_iter=3000):
     article_text = [article.get_text() for article in article_list if article.get_text()]
     matrix = TfidfVectorizer().fit_transform(article_text)
-    mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
+    mds = manifold.MDS(n_components=2, max_iter=max_iter, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
     pos = mds.fit_transform(euclidean_distances(matrix, matrix))
     return zip(article_list, pos)
 
