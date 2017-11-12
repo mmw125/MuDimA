@@ -31,10 +31,11 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
         end = (page_number + 1) * articles_per_page
         if category is None:
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
-                           "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+                           "WHERE article.topic_id = topic.id AND article.topic_id IS NOT NULL "
+                           "GROUP BY topic.id ORDER BY count(*) DESC;")
         else:
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
-                           "WHERE article.topic_id = topic.id AND topic.category = ? "
+                           "WHERE article.topic_id = topic.id AND topic.category = ? AND article.topic_id IS NOT NULL "
                            "GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
         return sorted([{"title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
