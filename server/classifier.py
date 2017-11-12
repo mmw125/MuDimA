@@ -6,9 +6,12 @@ import database_writer
 import models
 
 
-def group_articles(article_list, debug=False):
-    """Group articles from the article list into Grouping objects."""
-    article_list = [models.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
+def group_articles(article_list=None, debug=False):
+    """Groups good articles in the database."""
+    if article_list is None:
+        article_list = database_reader.get_ungrouped_articles()
+    else:
+        article_list = [models.Article(url=a) if isinstance(a, (str, unicode)) else a for a in article_list]
     groupings = database_reader.get_grouped_articles()
     no_keyword_grouping = None
     for index, article in enumerate(article_list):
