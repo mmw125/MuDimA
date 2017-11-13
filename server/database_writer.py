@@ -4,13 +4,17 @@ import constants
 import database_reader
 import database_utils
 import models
+import sqlite3
 
 
 def _write_article(article, connection, cursor):
-    cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text)
-                                  VALUES (?, ?, ?, ?, ?, ?)""",
-                   (article.get_title(), article.get_url(), article.get_url_to_image(),
-                    " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
+    try:
+        cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text)
+                                    VALUES (?, ?, ?, ?, ?, ?)""",
+                     (article.get_title(), article.get_url(), article.get_url_to_image(),
+                        " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
+    except sqlite3.IntegrityError:
+        pass
     article.set_in_database(True)
     connection.commit()
 
@@ -114,7 +118,7 @@ def clean_database():
     with database_utils.DatabaseConnection() as (connection, cursor):
         # Remove all of the topics with no topic and
         cursor.execute("DELETE FROM article WHERE article.topic_id IS NULL "
-                       "AND julianday(CURRENT_TIMESTAMP) - julianday(article.date) <= ?",
+                       "AND julianday(CURRENT_TIMESTAMP) - julianday(article.date) >= ?",
                        (constants.ARTICLE_REPLACEMENT_TIME,))
         connection.commit()
 
