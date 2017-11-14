@@ -2,6 +2,7 @@
 
 import constants
 import database_reader
+import database_writer
 import json
 import news_fetcher
 
@@ -18,10 +19,10 @@ def update_stories():
     news_fetcher.update_database()
 
 
-# @app.route("/getSources")
-# def get_sources():
-#     """Get the sources."""
-#     return json.dumps([source.__dict__ for source in news_fetcher.get_sources(language="en")])
+@app.route("/getSources")
+def get_sources():
+    """Get the sources."""
+    return json.dumps([database_reader.get_sources()])
 
 
 @app.route("/getTopics")
@@ -45,6 +46,15 @@ def get_stories_for_topic():
     """Get the stories for a topic id."""
     topic_id = request.args.get("topic_id")
     return json.dumps(database_reader.get_stories_for_topic(topic_id))
+
+
+@app.route("/userClick", methods=['POST'])
+def user_click():
+    """Update the popularity when the user clicks on an article."""
+    data = json.loads(request.data)
+    if "url" in data:
+        database_writer.mark_item_as_clicked(data["url"])
+    return ""
 
 
 if __name__ == "__main__":  # pragma: no cover

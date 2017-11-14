@@ -13,10 +13,11 @@ export default class Content extends React.Component {
       <div className="container-fluid">
         <HashRouter>
           <div className="container foreground">
-            <Route exact path='/' component={Home} />
             <Route path='/contact' component={Contact} />
             <Route path='/about' component={About} />
             <Route path='/story/:id' component={Story} />
+            <Route exact path='/:page_number' component={Home} />
+            <Route exact path='/' component={Home} />
           </div>
         </HashRouter>
       </div>

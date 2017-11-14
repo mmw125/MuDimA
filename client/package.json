@@ -22,6 +22,7 @@
     "react": "^15.5.4",
     "react-bootstrap": "^0.31.0",
     "react-dom": "^15.5.4",
+    "react-paginate": "^5.0.0",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "webpack": "^2.6.1",

@@ -1,6 +1,7 @@
 """Fetches the news from the api."""
 
 import classifier
+import constants
 import database_reader
 import database_writer
 import models
@@ -71,8 +72,15 @@ def get_sources(language=default_language, category="", country=""):
 
 def update_database():
     """Update the database with all the headlines from get_top_headlines."""
+    database_writer.clean_database()
     articles = get_top_headlines(add_category_information=True)
     urls_in_database = database_reader.get_urls()
     articles = [article for article in articles if article.get_url() not in urls_in_database]
-    grouped = classifier.group_articles(articles, debug=True)
-    database_writer.write_topics_to_database(grouped)
+    database_writer.write_articles(articles, )
+    grouped = classifier.group_articles()
+    database_writer.write_groups(grouped)
+    database_writer.write_group_fits()
+    database_writer.write_overall_fits()
+    if database_reader.get_number_articles_without_overall_fit() > constants.ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED:
+        print "Not enough new articles"
+    database_writer.update_topic_pictures()
