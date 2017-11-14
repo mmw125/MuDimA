@@ -31,10 +31,11 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
         end = (page_number + 1) * articles_per_page
         if category is None:
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
-                           "WHERE article.topic_id = topic.id GROUP BY topic.id ORDER BY count(*) DESC;")
+                           "WHERE article.topic_id = topic.id AND article.topic_id IS NOT NULL "
+                           "GROUP BY topic.id ORDER BY count(*) DESC;")
         else:
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
-                           "WHERE article.topic_id = topic.id AND topic.category = ? "
+                           "WHERE article.topic_id = topic.id AND topic.category = ? AND article.topic_id IS NOT NULL "
                            "GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
         return sorted([{"title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
@@ -59,19 +60,45 @@ def get_stories_for_topic(topic_id):
                                              for item in cursor.fetchall()]}
 
 
+def get_ungrouped_articles():
+    """Get the items in the database and puts them into Article and Grouping objects."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT name, keywords, link, article_text FROM article "
+                       "WHERE article_text != '' and topic_id is NULL;")
+        articles = []
+        for item in cursor.fetchall():
+            name, keywords, url, article_text = item
+            articles.append(models.Article(url=url, title=name, text=article_text, keywords=keywords))
+        return articles
+
+
+def get_groups_with_unfit_articles():
+    """Get the ids of the groups in the database that have articles that are not fit."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL "
+                       "GROUP BY topic_id;")
+        return [i[0] for i in cursor.fetchall()]
+
+
+def get_number_articles_without_overall_fit():
+    """Get the number of articles in the database without an overall fit."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL;")
+        return len(cursor.fetchall())
+
+
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, topic_id, link, article_text FROM article")
+        cursor.execute("SELECT name, keywords, topic_id, link, article_text, image_url FROM article "
+                       "WHERE article_text != '' AND topic_id IS NOT NULL;")
         groups = {}
         for item in cursor.fetchall():
-            name, keywords, id, url, article_text = item
-            article = models.Article(url=url, title=name, in_database=True, text=article_text)
+            name, keywords, id, url, article_text, image_url = item
+            article = models.Article(url=url, title=name, text=article_text, urlToImage=image_url, in_database=True)
             article.set_keywords(keywords)
             if id in groups:
-                groups.get(id).add_article(article)
+                groups.get(id).add_article(article, new_article=False)
             else:
-                group = models.Grouping(article, in_database=True)
-                group.set_uuid(id)
-                groups[id] = group
+                groups[id] = models.Grouping(article, uuid=id, in_database=True, has_new_articles=False)
         return list(groups.values())

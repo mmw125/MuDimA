@@ -16,7 +16,7 @@ class ClassifierTest(test_utils.DatabaseTest):
     def test_similar_urls_one_in_database(self):
         """Test that similar urls get grouped together when one is already in the database."""
         groupings = classifier.group_articles([test_utils.SIMILAR_ARTICLES[0]])
-        database_writer.write_topics_to_database(groupings)
+        database_writer.write_groups(groupings)
         self.assertEqual(1, len(classifier.group_articles([test_utils.SIMILAR_ARTICLES[1]])))
 
     def test_dissimilar_urls(self):

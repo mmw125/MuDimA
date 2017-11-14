@@ -17,6 +17,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 title_cleaner = re.compile("<.*?>")
 
 
+def calculate_fit(article_list, max_iter=3000):
+    """Calculate the fit for the articles in the list."""
+    article_text = [article.get_text() for article in article_list if article.get_text()]
+    matrix = TfidfVectorizer().fit_transform(article_text)
+    mds = manifold.MDS(n_components=2, max_iter=max_iter, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
+    pos = mds.fit_transform(euclidean_distances(matrix, matrix))
+    return zip(article_list, pos)
+
+
 class Article:
     """Represents an article."""
 
@@ -26,8 +35,8 @@ class Article:
         article_dict.update(kwargs)
         return Article(**article_dict)
 
-    def __init__(self, url, description="", title="", author="", publishedAt="", source={}, urlToImage="",
-                 text=None, in_database=False, keywords=None, category=None):
+    def __init__(self, url, description="", title="", author="", publishedAt="", source=None, urlToImage="",
+                 text=None, keywords=None, category=None, in_database=False):
         self.description = description
         self.title = re.sub(title_cleaner, "", title)
         self.url = url
@@ -39,14 +48,14 @@ class Article:
                 self.publishedAt = date.today()
         else:
             self.publishedAt = date.today()
-        self.source = source
+        self.source = source if source is not None else {}
         self.urlToImage = urlToImage
         self.text = text
         self.article = None
         self.keywords = None
         self.set_keywords(keywords)
-        self._in_database = in_database
         self.category = category
+        self._in_database = in_database
 
     def get_description(self):
         """Get description."""
@@ -87,9 +96,11 @@ class Article:
 
     def get_text(self):
         """Get the text of the article."""
-        if self.article is None:
-            self._init_article()
-        return self.article.text
+        if self.text is None:
+            if self.article is None:
+                self._init_article()
+            self.text = self.article.text
+        return self.text
 
     def set_keywords(self, keywords):
         """Set the keywords for the article."""
@@ -190,17 +201,20 @@ class Source:
 class Grouping(object):
     """Represents a set of articles that should be about the same topic."""
 
-    def __init__(self, article, in_database=False):
+    def __init__(self, article, uuid=None, in_database=False, has_new_articles=True):
         assert isinstance(article, Article)
         self._articles = [article]
-        self._uuid = None
+        self._uuid = uuid
         self._in_database = in_database
-        self._has_uuid = False
+        self._has_uuid = uuid is not None
+        self._new_articles = [article] if has_new_articles else []
 
-    def add_article(self, article):
+    def add_article(self, article, new_article=True):
         """Add the new article from the list."""
         assert isinstance(article, Article)
         self._articles.append(article)
+        if new_article:
+            self._new_articles.append(article)
 
     def get_articles(self):
         """Get the article in the grouping."""
@@ -281,11 +295,19 @@ class Grouping(object):
             return [(self.get_articles()[0], [0, 0])]
         if len(self.get_articles()) != len([a for a in self.get_articles() if a.get_keywords()]):
             return [(article, (0, 0)) for article in self.get_articles()]
-        article_text = [article.get_text() for article in self.get_articles()]
-        matrix = TfidfVectorizer().fit_transform(article_text)
-        mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
-        pos = mds.fit_transform(euclidean_distances(matrix, matrix))
-        return [(article, pos[i]) for i, article in enumerate(self.get_articles())]
+        return calculate_fit(self.get_articles())
+
+    def get_new_articles(self):
+        """Check if the grouping has new articles in it."""
+        return self._new_articles
+
+    def has_new_articles(self):
+        """Check if the grouping has new articles in it."""
+        return bool(self._new_articles)
+
+    def clean_new_articles(self):
+        """Empty the new article list."""
+        self._new_articles = []
 
     def __str__(self):  # pragma: no cover
         return '\n'.join([str(art) for art in self._articles])
