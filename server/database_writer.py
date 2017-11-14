@@ -9,10 +9,11 @@ import sqlite3
 
 def _write_article(article, connection, cursor):
     try:
-        cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text)
-                                    VALUES (?, ?, ?, ?, ?, ?)""",
+        cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text, source)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)""",
                        (article.get_title(), article.get_url(), article.get_url_to_image(),
-                        " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
+                        " ".join(article.get_keywords()), article.get_published_at(),
+                        article.get_text(), article.get_source().get_name()))
     except sqlite3.IntegrityError:
         pass
     article.set_in_database(True)
