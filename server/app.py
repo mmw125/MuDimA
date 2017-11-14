@@ -22,7 +22,7 @@ def update_stories():
 @app.route("/getSources")
 def get_sources():
     """Get the sources."""
-    return json.dumps([source.__dict__ for source in news_fetcher.get_sources(language="en")])
+    return json.dumps([database_reader.get_sources()])
 
 
 @app.route("/getTopics")

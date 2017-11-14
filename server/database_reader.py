@@ -40,15 +40,22 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
 
 
+def get_sources():
+    """Get all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT source, count(1) FROM article GROUP BY source")
+        return cursor.fetchall()
+
+
 def get_stories_for_topic(topic_id):
     """Get all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity FROM article WHERE topic_id=?",
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source FROM article WHERE topic_id=?",
                        (topic_id,))
-        return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2],
-                                              "x": item[3], "y": item[4], "popularity": item[5]}
+        return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
+                                              "y": item[4], "popularity": item[5], "source": item[6]}
                                              for item in cursor.fetchall()]}
 
 
