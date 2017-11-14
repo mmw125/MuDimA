@@ -11,7 +11,7 @@ def _write_article(article, connection, cursor):
     try:
         cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text)
                                     VALUES (?, ?, ?, ?, ?, ?)""",
-                     (article.get_title(), article.get_url(), article.get_url_to_image(),
+                       (article.get_title(), article.get_url(), article.get_url_to_image(),
                         " ".join(article.get_keywords()), article.get_published_at(), article.get_text()))
     except sqlite3.IntegrityError:
         pass

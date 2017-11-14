@@ -18,7 +18,7 @@ title_cleaner = re.compile("<.*?>")
 
 
 def calculate_fit(article_list, max_iter=3000):
-    """Calculates the fit for the articles in the list."""
+    """Calculate the fit for the articles in the list."""
     article_text = [article.get_text() for article in article_list if article.get_text()]
     matrix = TfidfVectorizer().fit_transform(article_text)
     mds = manifold.MDS(n_components=2, max_iter=max_iter, eps=1e-9, dissimilarity="precomputed", n_jobs=1)
