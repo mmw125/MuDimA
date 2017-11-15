@@ -3,7 +3,6 @@
 import constants
 import database_utils
 import models
-import math
 
 def get_urls():
     """Get all of the urls in articles in the database."""
@@ -29,7 +28,7 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
     with database_utils.DatabaseConnection() as (connection, cursor):
         start = page_number * articles_per_page
         end = (page_number + 1) * articles_per_page
-        total_pages = math.ceil(float(get_number_topics())/constants.ARTICLES_PER_PAGE)
+        total_items = get_number_topics()
         if category is None:
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
                            "WHERE article.topic_id = topic.id AND article.topic_id IS NOT NULL "
@@ -38,7 +37,7 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
                            "WHERE article.topic_id = topic.id AND topic.category = ? AND article.topic_id IS NOT NULL "
                            "GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
-        return sorted([{"page_count": total_pages, "title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
+        return sorted([{"total_items": total_items, "title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
 
 
@@ -54,7 +53,7 @@ def get_stories_for_topic(topic_id):
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source FROM article WHERE topic_id=?",
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, popularity FROM article WHERE topic_id=?",
                        (topic_id,))
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
                                               "y": item[4], "popularity": item[5], "source": item[6]}

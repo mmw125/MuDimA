@@ -1,13 +1,15 @@
 import React from 'react';
 import StoryCard from './StoryCard.jsx'
 import stories from '../data/mock-stories.js'
-import ReactPaginate from 'react-paginate';
-
+// import ReactPaginate from 'react-paginate';
+import Pagination from 'react-js-pagination';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true
+      isLoading: true,
+      activePage: 1,
+      total_items: false
     }
   }
   getTopics(page_number, callback) {
@@ -18,56 +20,52 @@ export default class Home extends React.Component {
         this.setState({
           isLoading: false,
           topics: responseJson,
-          all_pages_count: responseJson[0] ? responseJson[0]['page_count'] : 1
-        }, () => {
-          if (callback) {
-            console.log('calling');
-            callback();
-          }
+          total_items: responseJson[0] ? responseJson[0]['total_items'] : 0
         })
       })
       .catch((error) => { console.error(error); });
   }
   componentWillReceiveProps(nextProps) {
-    const {page_number=0} = nextProps.match.params;
-    this.getTopics(page_number);
+    let {page_number=1} = nextProps.match.params;
+    page_number = page_number != '' ? parseInt(page_number) : 1;
+    console.log('componentWillReceiveProps1', page_number);
+    this.setState({
+      activePage: page_number
+    }, () => {
+      this.getTopics(page_number);
+    });
   }
   componentDidMount() {
-    const {page_number=0} = this.props.match.params;
-    this.getTopics(page_number);
+    let {page_number=1} = this.props.match.params;
+    page_number = page_number != '' ? parseInt(page_number) : 1;
+    console.log('componentDidMount', page_number);
+    this.setState({
+      activePage: page_number
+    }, () => {
+      this.getTopics(page_number);
+    });
   }
-  handlePageClick(e) {
-    let callback = () => {
-      let page_id = parseInt(e.selected);
-      if (page_id) {
-        this.props.history.push('/' + (page_id + 1));
-      } else {
-        this.props.history.replace('/' + (page_id + 1));
-      }
-    }
-    this.getTopics(e.selected, callback);
+  handlePageClick(page_number) {
+    this.setState({
+      activePage: page_number
+    }, () => {
+      this.props.history.push('/'+page_number);
+    });
   }
   getPagination() {
     return (
       <div className="pagination-container">
-        <ReactPaginate previousLabel={"previous"}
-          initialPage={0}
-          nextLabel={"next"}
-          breakLabel={<a href="" className="page-link">...</a>}
-          pageClassName="page-item"
-          breakClassName="page-item"
-          previousClassName="page-item"
-          nextClassName="page-item"
-          pageLinkClassName="page-link"
-          nextLinkClassName="page-link"
-          previousLinkClassName="page-link"
-          pageCount={this.state['all_pages_count']}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={(e) => this.handlePageClick(e)}
-          containerClassName={"pagination"}
-          subContainerClassName={"pages pagination"}
-          activeClassName={"active"} />
+        <Pagination
+          activePage={this.state.activePage}
+          itemsCountPerPage={10}
+          totalItemsCount={this.state.total_items}
+          onChange={(e) => this.handlePageClick(e)}
+          activeClass="active"
+          innerClass="pagination"
+          activeLinkClass="page-link"
+          itemClass="page-item"
+          linkClass="page-link"
+        />
       </div>
     );
   }
@@ -80,7 +78,7 @@ export default class Home extends React.Component {
     return (
       <div className="row">
         {this.state.topics.map(storyData => <StoryCard key={storyData.id} url={storyData.image} name={storyData.title} id={storyData.id} count={storyData.count} {...storyData} />)}
-        {this.getPagination()}
+        {this.state.total_items && this.getPagination()}
       </div>
       );
   }
