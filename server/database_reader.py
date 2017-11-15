@@ -53,7 +53,7 @@ def get_stories_for_topic(topic_id):
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, popularity FROM article WHERE topic_id=?",
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source FROM article WHERE topic_id=?",
                        (topic_id,))
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
                                               "y": item[4], "popularity": item[5], "source": item[6]}
