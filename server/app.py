@@ -44,7 +44,7 @@ def get_number_pages():
 @app.route("/keywords")
 def get_top_keywords():
     """Get the most used keywords in the database."""
-    return json.dumps(database_reader.get_top_keywords(int(request.args.get("n", constants.DEFAULT_NUM_KEYWORDS)))
+    return json.dumps(database_reader.get_top_keywords(int(request.args.get("n", constants.DEFAULT_NUM_KEYWORDS))))
 
 
 @app.route("/getStories")

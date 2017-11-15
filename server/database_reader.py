@@ -97,7 +97,7 @@ def get_number_articles_without_overall_fit():
 def _get_article_keywords(article_url, cursor):
     """Get the keywords for the given article."""
     cursor.execute("SELECT keyword FROM keyword WHERE article_link = ?;", (article_url,))
-    return cursor.fetchall()
+    return set(item[0] for item in cursor.fetchall())
 
 
 def get_grouped_articles():

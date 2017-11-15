@@ -2,6 +2,7 @@
 
 import classifier
 import database_reader
+import database_utils
 import database_writer
 import test_utils
 
@@ -40,5 +41,11 @@ class DatabaseReaderTest(test_utils.DatabaseTest):
         groups = classifier.group_articles(test_utils.SIMILAR_ARTICLES)
         database_writer.write_articles(test_utils.SIMILAR_ARTICLES)
         database_writer.write_groups(groups)
-        print database_reader.get_grouped_articles()
         self.assertEqual(database_reader.get_grouped_articles()[0], groups[0])
+
+    def test_populate_keywords(self):
+        """Test writing and retrieving the keywords for an article."""
+        article = test_utils.SIMILAR_ARTICLES[0]
+        database_writer.write_articles([article])
+        with database_utils.DatabaseConnection() as (connection, cursor):
+            self.assertEqual(article.get_keywords(), database_reader._get_article_keywords(article.get_url(), cursor))
