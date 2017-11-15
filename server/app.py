@@ -62,4 +62,4 @@ if __name__ == "__main__":  # pragma: no cover
         # If there is nothing in the database, update it
         print "Nothing in database. Populating..."
         news_fetcher.update_database()
-    app.run(host="localhost", port=80, threaded=True)
+    app.run(host="localhost", port=80)
