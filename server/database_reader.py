@@ -63,19 +63,27 @@ def get_stories_for_topic(topic_id):
 def get_ungrouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, link, article_text FROM article "
-                       "WHERE article_text != '' and topic_id is NULL;")
+        cursor.execute("SELECT name, link, article_text FROM article "
+                       "WHERE article_text != '' AND topic_id IS NULL;")
         articles = []
         for item in cursor.fetchall():
-            name, keywords, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text, keywords=keywords))
+            name, url, article_text = item
+            articles.append(models.Article(url=url, title=name, text=article_text))
         return articles
+
+
+def get_top_keywords(num=10):
+    """Get the top keywords used in the database."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT keyword, COUNT(1) AS c FROM keyword GROUP BY keyword ORDER BY c DESC;")
+        items = cursor.fetchall()
+        return [item[0] for item in items] if len(items) >= num else [item[0] for item in items[:num]]
 
 
 def get_groups_with_unfit_articles():
     """Get the ids of the groups in the database that have articles that are not fit."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL "
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x IS NULL AND topic_id IS NOT NULL "
                        "GROUP BY topic_id;")
         return [i[0] for i in cursor.fetchall()]
 
@@ -83,20 +91,26 @@ def get_groups_with_unfit_articles():
 def get_number_articles_without_overall_fit():
     """Get the number of articles in the database without an overall fit."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x is NULL and topic_id IS NOT NULL;")
+        cursor.execute("SELECT topic_id FROM article WHERE group_fit_x IS NULL AND topic_id IS NOT NULL;")
         return len(cursor.fetchall())
+
+
+def _get_article_keywords(article_url, cursor):
+    """Get the keywords for the given article."""
+    cursor.execute("SELECT keyword FROM keyword WHERE article_link = ?;", (article_url,))
+    return cursor.fetchall()
 
 
 def get_grouped_articles():
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT name, keywords, topic_id, link, article_text, image_url FROM article "
+        cursor.execute("SELECT name, topic_id, link, article_text, image_url FROM article "
                        "WHERE article_text != '' AND topic_id IS NOT NULL;")
         groups = {}
         for item in cursor.fetchall():
-            name, keywords, id, url, article_text, image_url = item
+            name, id, url, article_text, image_url = item
             article = models.Article(url=url, title=name, text=article_text, urlToImage=image_url, in_database=True)
-            article.set_keywords(keywords)
+            article.set_keywords(_get_article_keywords(url, cursor))
             if id in groups:
                 groups.get(id).add_article(article, new_article=False)
             else:

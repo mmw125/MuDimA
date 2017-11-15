@@ -32,7 +32,7 @@ class DatabaseConnection:
         self.cursor.execute("""CREATE TABLE topic (name TEXT, id TEXT PRIMARY KEY, image_url TEXT,
                                category TEXT, fit_x DOUBLE, fit_y DOUBLE)""")
         self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT PRIMARY KEY, image_url TEXT,
-                               article_text TEXT, keywords TEXT, topic_id TEXT, date DATETIME,
+                               article_text TEXT, topic_id TEXT, date DATETIME,
                                fit_x DOUBLE, fit_y DOUBLE, group_fit_x DOUBLE, group_fit_y DOUBLE,
                                popularity UNSIGNED INT DEFAULT 1, source TEXT,
                                FOREIGN KEY(topic_id) REFERENCES topic(id) ON DELETE CASCADE)""")

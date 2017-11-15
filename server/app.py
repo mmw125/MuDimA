@@ -41,6 +41,12 @@ def get_number_pages():
     return json.dumps(database_reader.get_number_topics(category=category) / items_per_page)
 
 
+@app.route("/keywords")
+def get_top_keywords():
+    """Get the most used keywords in the database."""
+    return json.dumps(database_reader.get_top_keywords())
+
+
 @app.route("/getStories")
 def get_stories_for_topic():
     """Get the stories for a topic id."""
