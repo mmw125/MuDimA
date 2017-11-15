@@ -72,12 +72,11 @@ def get_ungrouped_articles():
         return articles
 
 
-def get_top_keywords(num=10):
+def get_top_keywords(num=constants.DEFAULT_NUM_KEYWORDS):
     """Get the top keywords used in the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT keyword, COUNT(1) AS c FROM keyword GROUP BY keyword ORDER BY c DESC LIMIT ?;", (num,))
-        items = cursor.fetchall()
-        return [item[0] for item in items]
+        return [item[0] for item in cursor.fetchall()]
 
 
 def get_groups_with_unfit_articles():
