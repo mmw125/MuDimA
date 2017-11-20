@@ -17,6 +17,7 @@ export default class Content extends React.Component {
             <Route path='/contact' component={Contact} />
             <Route path='/about' component={About} />
             <Route path='/story/:id' component={Story} />
+            <Route path='/:page_number([0-9]{1,10})' component={Home} />
           </div>
         </HashRouter>
       </div>
