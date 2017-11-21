@@ -17,7 +17,7 @@ export default class ScatterPlot extends React.Component {
             }
         }
     }
-    getBoxHtml(story) {
+    getBoxHtml(e, story) {
         return (
             '<div class="card preview_card"> \
                 <a href="'+ story['link'] +'" style="text-decoration: none">  \
@@ -43,13 +43,13 @@ export default class ScatterPlot extends React.Component {
                     .attr('pointer-events', 'none')
                     .attr("class", "tooltip")
                     .style("opacity", 1)
-                    .html(this.getBoxHtml(story))
+                    .html(this.getBoxHtml(e, story))
                     .style("position", 'absolute')
                     .style("left", ((d.x - 100) + "px"))
                     .style("top", (d.y +"px"));
     }
-
-    handleMouseOut(e) {
+	
+    handleMouseLeave(e) {
         d3.select('div.tooltip').remove();
         d3.select(e.target).attr({fill: "black"});
     }
@@ -93,16 +93,28 @@ export default class ScatterPlot extends React.Component {
                 r: 8 + story['popularity'] / 5,
                 key: index
             };
-            return <circle href={circleProps.link} onMouseOut={(e) => this.handleMouseOut(e)}
-                           onMouseOver={(e) => this.handleMouseHover(e, story)}
-                           onClick={this.handleMouseClick.bind(this)} {...circleProps} />;
+            return (
+					<image href={circleProps.href} 
+						key={circleProps.key}
+						height={circleProps.r * 2} 
+						width={circleProps.r * 2} 
+						x={circleProps.cx} 
+						y={circleProps.cy} 
+						r={circleProps.r} 
+						xlinkHref="https://www.url.com/favicon.ico" 
+						clipPath="url(#circleView)"
+						onMouseOut={this.handleMouseLeave.bind(this)}
+                        onMouseOver={this.handleMouseHover.bind(this)}
+                        onClick={this.handleMouseClick.bind(this)}
+						/> 
+ 			)
         };
     }
 
     render() {
         return (
             <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
-                <g>{this.props.data.map(this.renderCircles(this.props))}</g>
+                {this.props.data.map(this.renderCircles(this.props))}
             </svg>
         );
     }
