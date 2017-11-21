@@ -35,8 +35,8 @@ export default class ScatterPlot extends React.Component {
         const d = {
             name: e.target.getAttribute('name'),
             link: e.target.getAttribute('link'),
-            x: e.target.getAttribute('cx'),
-            y: e.target.getAttribute('cy')
+            x: e.target.getAttribute('x'),
+            y: e.target.getAttribute('y')
         };
         d3.select(e.target).attr({fill: "orange"});
         var div = d3.select("body").append("div")
@@ -45,8 +45,8 @@ export default class ScatterPlot extends React.Component {
                     .style("opacity", 1)
                     .html(this.getBoxHtml(e, story))
                     .style("position", 'absolute')
-                    .style("left", ((d.x - 100) + "px"))
-                    .style("top", (d.y +"px"));
+                    .style("left", ((d.x) - 150 + "px"))
+                    .style("top", (d.y + "px"));
     }
 	
     handleMouseLeave(e) {
@@ -55,7 +55,7 @@ export default class ScatterPlot extends React.Component {
     }
 
     handleMouseClick(e) {
-        window.open(e.target.getAttribute('href'), '_blank');
+        window.open(e.target.getAttribute('type'), '_blank');
         fetch('http://localhost/userClick', {
             method: 'POST',
             headers: {
@@ -63,7 +63,7 @@ export default class ScatterPlot extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                url: e.target.getAttribute('href'),
+                url: e.target.getAttribute('type'),
             })
         });
     }
@@ -91,22 +91,23 @@ export default class ScatterPlot extends React.Component {
                 cx: this.xScale()(coords[0]),
                 cy: this.yScale()(coords[1]),
                 r: 8 + story['popularity'] / 5,
-                key: index
+                key: index,
+                favicon: new URL(story['link']).origin + "/favicon.ico" 
             };
             return (
-					<image href={circleProps.href} 
-						key={circleProps.key}
-						height={circleProps.r * 2} 
-						width={circleProps.r * 2} 
-						x={circleProps.cx} 
-						y={circleProps.cy} 
-						r={circleProps.r} 
-						xlinkHref="https://www.url.com/favicon.ico" 
-						clipPath="url(#circleView)"
-						onMouseOut={this.handleMouseLeave.bind(this)}
-                        onMouseOver={this.handleMouseHover.bind(this)}
-                        onClick={this.handleMouseClick.bind(this)}
-						/> 
+				<image 
+					type ={circleProps.href}
+					xlinkHref={circleProps.favicon} 
+					key={circleProps.key}
+					height={circleProps.r * 2} 
+					width={circleProps.r * 2} 
+					x={circleProps.cx} 
+					y={circleProps.cy} 
+					r={circleProps.r} 
+					onMouseOut={(e) => this.handleMouseLeave(e)}
+					onMouseOver={(e) => this.handleMouseHover(e, story)}
+					onClick={this.handleMouseClick.bind(this)}
+				/> 
  			)
         };
     }
