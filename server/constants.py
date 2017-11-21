@@ -14,3 +14,6 @@ ARTICLES_PER_PAGE = 10
 
 # Number of new articles needed before the all fit is updated.
 ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED = 200
+
+# Number of keywords to return by default.
+DEFAULT_NUM_KEYWORDS = 10
