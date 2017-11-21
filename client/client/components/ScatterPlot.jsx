@@ -92,7 +92,7 @@ export default class ScatterPlot extends React.Component {
                 cy: this.yScale()(coords[1]),
                 r: 11 + story['popularity'] / 4,
                 key: index,
-                favicon: new URL(story['link']).origin + "/favicon.ico" 
+                favicon: story['favicon'],
             };
             return (
 				<image 

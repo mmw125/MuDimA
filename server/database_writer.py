@@ -7,17 +7,16 @@ import models
 import sqlite3
 
 
-def _write_article(article, connection, cursor):
+def _write_article(article, cursor):
     try:
-        cursor.execute("""INSERT INTO article (name, link, image_url, keywords, date, article_text, source)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        cursor.execute("INSERT INTO article (name, link, image_url, keywords, date, article_text, source, favicon) "
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                        (article.get_title(), article.get_url(), article.get_url_to_image(),
                         " ".join(article.get_keywords()), article.get_published_at(),
-                        article.get_text(), article.get_source().get_name()))
-    except sqlite3.IntegrityError:
-        pass
+                        article.get_text(), article.get_source().get_name(), article.get_favicon()))
+    except sqlite3.IntegrityError as e:
+        print "Integrity Error", e.message
     article.set_in_database(True)
-    connection.commit()
 
 
 def write_articles(article_list):
@@ -25,7 +24,7 @@ def write_articles(article_list):
     with database_utils.DatabaseConnection() as (connection, cursor):
         for i, article in enumerate(article_list):
             print "adding article", i, "out of", len(article_list)
-            _write_article(article, connection, cursor)
+            _write_article(article, cursor)
 
 
 def write_groups(grouping_list=None):
@@ -39,11 +38,9 @@ def write_groups(grouping_list=None):
                 grouping.set_in_database(True)
             for article in grouping.get_new_articles():
                 if not article.in_database():
-                    _write_article(article, connection, cursor)
+                    _write_article(article, cursor)
                 cursor.execute("UPDATE article SET topic_id = ? WHERE link = ?",
                                (grouping.get_uuid(), article.get_url()))
-            connection.commit()
-
 
 def write_group_fits(grouping_list=None):
     """Write the group fits into the database."""
@@ -56,7 +53,6 @@ def write_group_fits(grouping_list=None):
             for article, fit in grouping.calculate_fit():
                 cursor.execute("UPDATE article SET group_fit_x = ?, group_fit_y = ? WHERE link = ?",
                                (fit[0], fit[1], article.get_url()))
-                connection.commit()
 
 
 def write_overall_fits(grouping_list=None):
@@ -65,13 +61,12 @@ def write_overall_fits(grouping_list=None):
     with database_utils.DatabaseConnection() as (connection, cursor):
         articles = [article for grouping in grouping_list for article in grouping.get_articles()]
         fits = models.calculate_fit(articles, max_iter=500)
-        i = 1
+        size, i = len(fits), 1
         for article, fit in fits:
-            print "Updating fit", i, "out of", len(fits)
+            print "Updating fit", i, "out of", size
             cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
                            (fit[0], fit[1], article.get_url()))
             i += 1
-        connection.commit()
 
 
 def remove_grouping_from_database(grouping):
@@ -81,7 +76,6 @@ def remove_grouping_from_database(grouping):
         grouping.set_in_database(False)
         for article in grouping.get_articles():
             article.set_in_database(False)
-        connection.commit()
 
 
 def _remove_group_ids_from_database(group_ids):
@@ -92,14 +86,12 @@ def _remove_group_ids_from_database(group_ids):
         for group_id in group_ids:
             cursor.execute("""DELETE FROM topic WHERE id = ?""", (group_id,))
             cursor.execute("""DELETE FROM article WHERE topic_id = ?""", (group_id,))
-        connection.commit()
 
 
 def mark_item_as_clicked(url):
     """Mark the article as visited by incrementing its popularity."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("UPDATE article SET popularity = popularity + 1 WHERE link = ?", (url,))
-        connection.commit()
 
 
 def update_topic_pictures():
@@ -111,7 +103,6 @@ def update_topic_pictures():
             item = cursor.fetchone()
             if item:
                 cursor.execute("UPDATE topic SET image_url = ? WHERE id = ?", (item[0], id))
-        connection.commit()
 
 
 def clean_database():
@@ -121,7 +112,6 @@ def clean_database():
         cursor.execute("DELETE FROM article WHERE article.topic_id IS NULL "
                        "AND julianday(CURRENT_TIMESTAMP) - julianday(article.date) >= ?",
                        (constants.ARTICLE_REPLACEMENT_TIME,))
-        connection.commit()
 
         # Remove all of the topics that only have articles that are over some number of days old
         cursor.execute("SELECT id FROM topic WHERE NOT EXISTS(SELECT 1 FROM article WHERE topic.id = article.topic_id "
@@ -130,5 +120,4 @@ def clean_database():
         groups_to_remove = [item[0] for item in cursor.fetchall()]
         if groups_to_remove:
             print "Removing", len(groups_to_remove), "groups"
-        connection.commit()
     _remove_group_ids_from_database(groups_to_remove)

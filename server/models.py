@@ -85,6 +85,11 @@ class Article:
         """Get description."""
         return self.urlToImage
 
+    def get_favicon(self):
+        """Get the favicon for the article."""
+        self._init_article()
+        return self.article.meta_favicon
+
     def _init_article(self):
         if self.article is None:
             self.article = newspaper.Article(self.get_url())
