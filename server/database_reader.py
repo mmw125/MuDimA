@@ -115,3 +115,10 @@ def get_grouped_articles():
             else:
                 groups[id] = models.Grouping(article, uuid=id, in_database=True, has_new_articles=False)
         return list(groups.values())
+
+def get_articles(keyword, limit=10):
+    """Get the items in the database and puts them into Article and Grouping objects."""
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT article_link FROM keyword JOIN article ON keyword.article_link = article.link "
+                       "WHERE keyword = ? GROUP BY article_link ORDER BY date DESC;", (keyword, limit))
+        cursor.fetchall()

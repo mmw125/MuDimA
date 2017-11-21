@@ -33,6 +33,14 @@ def get_topics():
     return json.dumps(database_reader.get_topics(page_number=page_number, category=category))
 
 
+@app.route("/articles")
+def get_articles():
+    """Get articles with some filter."""
+    keyword = request.args.get("kw")
+    return json.dumps(database_reader.get_articles(keyword=keyword))
+
+
+
 @app.route("/getNumberTopics")
 def get_number_pages():
     """Get the number of topics."""
