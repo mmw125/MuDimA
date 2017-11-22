@@ -2,6 +2,7 @@
 
 import sqlite3
 import os
+import traceback
 
 
 def database_name():
@@ -42,5 +43,8 @@ class DatabaseConnection:
         return self.connection, self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.connection.commit()
+        try:
+            self.connection.commit()
+        except:
+            traceback.print_exc()
         self.connection.close()

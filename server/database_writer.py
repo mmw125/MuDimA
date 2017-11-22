@@ -7,6 +7,14 @@ import models
 import sqlite3
 
 
+def _print_status(name, i, out_of):
+    if i is 0:
+        print "Writing", out_of, name
+    print ".",
+    if i == out_of - 1:
+        print "done"
+
+
 def _write_article(article, cursor):
     try:
         cursor.execute("INSERT INTO article (name, link, image_url, keywords, date, article_text, source, favicon) "
@@ -23,14 +31,15 @@ def write_articles(article_list):
     """Write articles in the article list into the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         for i, article in enumerate(article_list):
-            print "adding article", i, "out of", len(article_list)
+            _print_status("articles", i, len(article_list))
             _write_article(article, cursor)
 
 
 def write_groups(grouping_list=None):
     """Write groups in the grouping list into the database if they are not already there."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        for grouping in grouping_list:
+        for i, grouping in enumerate(grouping_list):
+            _print_status("groups", i, len(grouping_list))
             if not grouping.in_database():
                 cursor.execute("INSERT INTO topic (name, id, image_url, category) VALUES (?, ?, ?, ?)",
                                (grouping.get_title(), grouping.get_uuid(),
@@ -42,6 +51,7 @@ def write_groups(grouping_list=None):
                 cursor.execute("UPDATE article SET topic_id = ? WHERE link = ?",
                                (grouping.get_uuid(), article.get_url()))
 
+
 def write_group_fits(grouping_list=None):
     """Write the group fits into the database."""
     if grouping_list is None:
@@ -49,7 +59,7 @@ def write_group_fits(grouping_list=None):
         grouping_list = [group for group in database_reader.get_grouped_articles() if group.get_uuid() in group_ids]
     with database_utils.DatabaseConnection() as (connection, cursor):
         for i, grouping in enumerate(grouping_list):
-            print "Writing group fit", i, "out of", len(grouping_list)
+            _print_status("group fits", i, len(grouping_list))
             for article, fit in grouping.calculate_fit():
                 cursor.execute("UPDATE article SET group_fit_x = ?, group_fit_y = ? WHERE link = ?",
                                (fit[0], fit[1], article.get_url()))
@@ -61,9 +71,9 @@ def write_overall_fits(grouping_list=None):
     with database_utils.DatabaseConnection() as (connection, cursor):
         articles = [article for grouping in grouping_list for article in grouping.get_articles()]
         fits = models.calculate_fit(articles, max_iter=500)
-        size, i = len(fits), 1
+        i = 1
         for article, fit in fits:
-            print "Updating fit", i, "out of", size
+            _print_status("fits", i, len(fits))
             cursor.execute("UPDATE article SET fit_x = ?, fit_y = ? WHERE link = ?",
                            (fit[0], fit[1], article.get_url()))
             i += 1

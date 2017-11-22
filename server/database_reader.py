@@ -4,6 +4,7 @@ import constants
 import database_utils
 import models
 
+
 def get_urls():
     """Get all of the urls in articles in the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
@@ -70,7 +71,7 @@ def get_ungrouped_articles():
         articles = []
         for item in cursor.fetchall():
             name, keywords, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text, keywords=keywords))
+            articles.append(models.Article(url=url, title=name, text=article_text, keywords=keywords, in_database=True))
         return articles
 
 

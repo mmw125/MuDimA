@@ -3,7 +3,9 @@
 import collections
 import newspaper
 import re
+import urlparse
 import uuid
+import validators
 
 from datetime import date
 from dateutil import parser
@@ -88,7 +90,15 @@ class Article:
     def get_favicon(self):
         """Get the favicon for the article."""
         self._init_article()
-        return self.article.meta_favicon
+        favicon = self.article.meta_favicon
+        if favicon != '':
+            if type(validators.url(favicon)) != validators.ValidationFailure:
+                return favicon
+            favicon = urlparse.urljoin(self.get_url(), self.article.meta_favicon)
+            if type(validators.url(favicon)) != validators.ValidationFailure:
+                return favicon
+        favicon = urlparse.urljoin(urlparse.urlparse(self.get_url()).netloc, "favicon.ico")
+        return favicon if type(validators.url(favicon)) != validators.ValidationFailure else None
 
     def _init_article(self):
         if self.article is None:

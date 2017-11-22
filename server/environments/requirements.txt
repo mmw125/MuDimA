@@ -5,3 +5,4 @@ newspaper
 python-dateutil
 requests
 scikit-learn[alldeps]
+validators
