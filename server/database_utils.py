@@ -45,6 +45,6 @@ class DatabaseConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
             self.connection.commit()
-        except:
+        except IOError:
             traceback.print_exc()
         self.connection.close()
