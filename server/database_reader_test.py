@@ -40,5 +40,4 @@ class DatabaseReaderTest(test_utils.DatabaseTest):
         groups = classifier.group_articles(test_utils.SIMILAR_ARTICLES)
         database_writer.write_articles(test_utils.SIMILAR_ARTICLES)
         database_writer.write_groups(groups)
-        print database_reader.get_grouped_articles()
         self.assertEqual(database_reader.get_grouped_articles()[0], groups[0])

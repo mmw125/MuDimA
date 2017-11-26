@@ -7,7 +7,7 @@ import urlparse
 import uuid
 import validators
 
-from datetime import date
+from datetime import date, datetime
 from dateutil import parser
 
 from lxml import etree
@@ -50,6 +50,8 @@ class Article:
                 self.publishedAt = date.today()
         else:
             self.publishedAt = date.today()
+        if isinstance(self.publishedAt, datetime):
+            self.publishedAt = self.publishedAt.date()
         self.source = source if source is not None else {}
         self.urlToImage = urlToImage
         self.text = text

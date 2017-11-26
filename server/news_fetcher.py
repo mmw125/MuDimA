@@ -4,7 +4,9 @@ import classifier
 import constants
 import database_reader
 import database_writer
+import datetime
 import models
+import pytz
 import requests
 
 default_language = "en"
@@ -60,7 +62,10 @@ def get_top_headlines(sources=list(), q=list(), category="", language=default_la
         url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
                                            "language": language, "country": country})
         response = requests.get(url)
-        return _parse_response(response, category=category)
+        replacement_time = datetime.timedelta(constants.ARTICLE_REPLACEMENT_TIME)
+        return [article for article in _parse_response(response, category=category)
+                if (datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) - replacement_time).date() <
+                article.get_published_at()]
 
 
 def get_sources(language=default_language, category="", country=""):
@@ -76,7 +81,7 @@ def update_database():
     articles = get_top_headlines(add_category_information=True)
     urls_in_database = database_reader.get_urls()
     articles = [article for article in articles if article.get_url() not in urls_in_database]
-    database_writer.write_articles(articles, )
+    database_writer.write_articles(articles)
     grouped = classifier.group_articles()
     database_writer.write_groups(grouped)
     database_writer.write_group_fits()
