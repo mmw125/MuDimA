@@ -73,6 +73,7 @@ export default class ScatterPlot extends React.Component {
     };
 
     yScale() {
+        console.log('this.height', this.props.height, this.props.padding, this.props.width);
         return d3.scale.pow()
             .domain([-1, 1])
             .range([this.props.height - this.props.padding, this.props.padding])
@@ -97,6 +98,7 @@ export default class ScatterPlot extends React.Component {
     }
 
     render() {
+        console.log('this.props.data', this.props.data);
         return (
             <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
                 <g>{this.props.data.map(this.renderCircles(this.props))}</g>

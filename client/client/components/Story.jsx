@@ -1,5 +1,6 @@
 import React from 'react';
 import ScatterPlot from './ScatterPlot.jsx';
+import ScatterPlotR from './ScatterPlotRecharts.jsx';
 import stories from '../data/mock-stories.js'
 
 const styles = {
@@ -32,7 +33,6 @@ export default class Story extends React.Component {
     return fetch('http://localhost/getStories?topic_id=' + this.props.match.params.id)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({
           isLoading: false,
           source: responseJson.articles,
@@ -53,7 +53,8 @@ export default class Story extends React.Component {
     return (
       <div className="row">
         <h1>{this.state.title}</h1>
-        <ScatterPlot {...this.state} {...styles} />
+        {/*<ScatterPlot {...this.state} {...styles} />*/}
+        <ScatterPlotR data={this.state.data}/>
       </div>
     );
   }
