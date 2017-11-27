@@ -4,6 +4,7 @@ import constants
 import database_utils
 import models
 
+
 def get_urls():
     """Get all of the urls in articles in the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
@@ -37,7 +38,8 @@ def get_topics(category=None, page_number=0, articles_per_page=constants.ARTICLE
             cursor.execute("SELECT topic.name, topic.id, topic.image_url, topic.category, count(*) FROM article, topic "
                            "WHERE article.topic_id = topic.id AND topic.category = ? AND article.topic_id IS NOT NULL "
                            "GROUP BY topic.id ORDER BY count(*) DESC;", (category,))
-        return sorted([{"total_items": total_items, "title": item[0], "id": item[1], "image": item[2], "category": item[3], "count": item[4]}
+        return sorted([{"total_items": total_items, "title": item[0], "id": item[1],
+                        "image": item[2], "category": item[3], "count": item[4]}
                        for item in cursor.fetchall()[start:end]], key=lambda x: -x["count"])
 
 
