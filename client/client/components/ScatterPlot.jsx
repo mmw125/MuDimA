@@ -90,20 +90,15 @@ export default class ScatterPlot extends React.Component {
                 name: story['name'],
                 cx: this.xScale()(coords[0]),
                 cy: this.yScale()(coords[1]),
+                height: 11 + story['popularity'] / 4,
+                width: 11 + story['popularity'] / 4,
                 r: 11 + story['popularity'] / 4,
                 key: index,
-                favicon: story['favicon'],
+                xlinkHref: story['favicon'],
             };
             return (
 				<image 
-					type ={circleProps.href}
-					xlinkHref={circleProps.favicon} 
-					key={circleProps.key}
-					height={circleProps.r * 2} 
-					width={circleProps.r * 2} 
-					x={circleProps.cx} 
-					y={circleProps.cy} 
-					r={circleProps.r} 
+					{... circleProps}
 					onMouseOut={(e) => this.handleMouseLeave(e)}
 					onMouseOver={(e) => this.handleMouseHover(e, story)}
 					onClick={this.handleMouseClick.bind(this)}
