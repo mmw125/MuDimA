@@ -85,7 +85,8 @@ def update_database():
     grouped = classifier.group_articles()
     database_writer.write_groups(grouped)
     database_writer.write_group_fits()
-    database_writer.write_overall_fits()
     if database_reader.get_number_articles_without_overall_fit() > constants.ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED:
-        print "Not enough new articles"
+        print "Not enough new articles to update all fits"
+    else:
+        database_writer.write_overall_fits()
     database_writer.update_topic_pictures()
