@@ -41,6 +41,12 @@ def get_number_pages():
     return json.dumps(database_reader.get_number_topics(category=category) / items_per_page)
 
 
+@app.route("/keywords")
+def get_top_keywords():
+    """Get the most used keywords in the database."""
+    return json.dumps(database_reader.get_top_keywords(int(request.args.get("n", constants.DEFAULT_NUM_KEYWORDS))))
+
+
 @app.route("/getStories")
 def get_stories_for_topic():
     """Get the stories for a topic id."""
@@ -62,4 +68,4 @@ if __name__ == "__main__":  # pragma: no cover
         # If there is nothing in the database, update it
         print "Nothing in database. Populating..."
         news_fetcher.update_database()
-    app.run(host="localhost", port=80)
+    app.run(host="localhost", port=80, threaded=True)
