@@ -48,7 +48,7 @@ export default class ScatterPlot extends React.Component {
                     .style("left", ((d.x) - 150 + "px"))
                     .style("top", (d.y + "px"));
     }
-	
+
     handleMouseLeave(e) {
         d3.select('div.tooltip').remove();
         d3.select(e.target).attr({fill: "black"});
