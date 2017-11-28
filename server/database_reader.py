@@ -70,7 +70,7 @@ def get_ungrouped_articles():
         articles = []
         for item in cursor.fetchall():
             name, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text))
+            articles.append(models.Article(url=url, title=name, text=article_text, in_database=True))
         return articles
 
 
