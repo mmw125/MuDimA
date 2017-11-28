@@ -35,8 +35,8 @@ export default class ScatterPlot extends React.Component {
         const d = {
             name: e.target.getAttribute('name'),
             link: e.target.getAttribute('link'),
-            x: e.target.getAttribute('x'),
-            y: e.target.getAttribute('y')
+            x: e.target.getAttribute('cx'),
+            y: e.target.getAttribute('cy')
         };
         d3.select(e.target).attr({fill: "orange"});
         var div = d3.select("body").append("div")
@@ -90,8 +90,6 @@ export default class ScatterPlot extends React.Component {
                 y: this.yScale()(coords[1]),
                 height: 2 * (11 + story['popularity'] / 5),
                 width: 2 * (11 + story['popularity'] / 5),
-                type: story['link'],
-                name: story['name'],
                 key: index,
             }
             const circleProps = {
@@ -101,10 +99,14 @@ export default class ScatterPlot extends React.Component {
                 fill : "#FFFFFF"
             };
             const imgProps = {
+                cx: this.xScale()(coords[0]),
+                cy: this.yScale()(coords[1]),
                 xlinkHref: story['favicon'],
                 clipPath: "url(#" + index + "clip)",
                 height: 2 * (11 + story['popularity'] / 5),
                 width: 2 * (11 + story['popularity'] / 5),
+                type: story['link'],
+                name: story['name'],
             };
             return (
                 <svg {...svgProps}>
@@ -115,10 +117,10 @@ export default class ScatterPlot extends React.Component {
                     </defs>
                     <image
                         {... imgProps}
+                        onMouseOut={(e) => this.handleMouseLeave(e)}
+                        onMouseOver={(e) => this.handleMouseHover(e, story)}
+                        onClick={this.handleMouseClick.bind(this)}
                     />
-                    onMouseOut={(e) => this.handleMouseLeave(e)}
-                    onMouseOver={(e) => this.handleMouseHover(e, story)}
-                    onClick={this.handleMouseClick.bind(this)}
 				</svg>
  			)
         };
