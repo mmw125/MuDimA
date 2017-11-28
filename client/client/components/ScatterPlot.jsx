@@ -16,10 +16,22 @@ export default class ScatterPlot extends React.Component {
                 yScale: this.props.data[1]
             }
         }
-
     }
-
-    handleMouseHover(e) {
+    getBoxHtml(story) {
+        return (
+            '<div class="card preview_card"> \
+                <a href="'+ story['link'] +'" style="text-decoration: none">  \
+                    <div style="background: url('+ story['image'] +'); background-size: cover; background-position: center center; width: 100%; height: 160px; position: relative; z-index: 2"> \
+                    </div> \
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" width="70%" class="loader_img"/> \
+                    <div class="card-block"> \
+                      <h4 class="card-text">'+ story['name'] +'</h4> \
+                    </div> \
+                </a> \
+            </div>'
+        );
+    }
+    handleMouseHover(e, story) {
         const d = {
             name: e.target.getAttribute('name'),
             link: e.target.getAttribute('link'),
@@ -27,28 +39,19 @@ export default class ScatterPlot extends React.Component {
             y: e.target.getAttribute('cy')
         };
         d3.select(e.target).attr({fill: "orange"});
-
-        d3.select(this.refs.scatterPlot).append("text").attr({
-            id: "t" + "hi",  // Create an id for text so we can select it later for removing on mouseout
-            x: function () {
-                return d.x - 30;
-            },
-            y: function () {
-                return d.y - 15;
-            }
-        })
-            .text(function () {
-                return [d.name, d.link];  // Value of the text
-            });
+        var div = d3.select("body").append("div")
+                    .attr('pointer-events', 'none')
+                    .attr("class", "tooltip")
+                    .style("opacity", 1)
+                    .html(this.getBoxHtml(story))
+                    .style("position", 'absolute')
+                    .style("left", ((d.x - 100) + "px"))
+                    .style("top", (d.y +"px"));
     }
 
     handleMouseOut(e) {
-        const d = {
-            x: e.target.getAttribute('cx'),
-            y: e.target.getAttribute('cy')
-        };
+        d3.select('div.tooltip').remove();
         d3.select(e.target).attr({fill: "black"});
-        d3.select("#t" + "hi").remove();
     }
 
     handleMouseClick(e) {
@@ -73,7 +76,6 @@ export default class ScatterPlot extends React.Component {
     };
 
     yScale() {
-        console.log('this.height', this.props.height, this.props.padding, this.props.width);
         return d3.scale.pow()
             .domain([-1, 1])
             .range([this.props.height - this.props.padding, this.props.padding])
@@ -91,14 +93,13 @@ export default class ScatterPlot extends React.Component {
                 r: 8 + story['popularity'] / 5,
                 key: index
             };
-            return <circle href={circleProps.link} onMouseOut={this.handleMouseOut.bind(this)}
-                           onMouseOver={this.handleMouseHover.bind(this)}
+            return <circle href={circleProps.link} onMouseOut={(e) => this.handleMouseOut(e)}
+                           onMouseOver={(e) => this.handleMouseHover(e, story)}
                            onClick={this.handleMouseClick.bind(this)} {...circleProps} />;
         };
     }
 
     render() {
-        console.log('this.props.data', this.props.data);
         return (
             <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
                 <g>{this.props.data.map(this.renderCircles(this.props))}</g>
