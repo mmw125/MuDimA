@@ -11,9 +11,7 @@ def get_urls():
         cursor.execute("SELECT link FROM article;")
         urls = set(item[0] for item in cursor.fetchall())
         cursor.execute("SELECT link FROM bad_article;")
-        urls.union(item[0] for item in cursor.fetchall())
-        print urls
-        return urls
+        return urls.union(item[0] for item in cursor.fetchall())
 
 
 def get_number_topics(category=None):

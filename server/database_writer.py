@@ -18,7 +18,7 @@ def _write_article(article, connection, cursor):
                 cursor.execute("INSERT INTO keyword (keyword, article_link) VALUES (?, ?);",
                                (keyword, article.get_url()))
         else:
-            cursor.execute("INSERT INTO bad_article (link) VALUES (?)", (article.get_url(),))
+            cursor.execute("INSERT INTO bad_article (link) VALUES (?);", (article.get_url(),))
     except sqlite3.IntegrityError as e:
         print e.message
     article.set_in_database(True)
