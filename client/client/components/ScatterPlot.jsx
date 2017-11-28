@@ -88,8 +88,8 @@ export default class ScatterPlot extends React.Component {
             const circleProps = {
                 href: story['link'],
                 name: story['name'],
-                cx: this.xScale()(coords[0]),
-                cy: this.yScale()(coords[1]),
+                x: this.xScale()(coords[0]),
+                y: this.yScale()(coords[1]),
                 height: 11 + story['popularity'] / 4,
                 width: 11 + story['popularity'] / 4,
                 r: 11 + story['popularity'] / 4,
