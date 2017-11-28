@@ -85,24 +85,41 @@ export default class ScatterPlot extends React.Component {
     renderCircles() {
         return (story, index) => {
             const coords = [story['x'], story['y']]
-            const circleProps = {
-                href: story['link'],
-                name: story['name'],
+            const svgProps = {
                 x: this.xScale()(coords[0]),
                 y: this.yScale()(coords[1]),
-                height: 11 + story['popularity'] / 4,
-                width: 11 + story['popularity'] / 4,
-                r: 11 + story['popularity'] / 4,
+                height: 2 * (11 + story['popularity'] / 5),
+                width: 2 * (11 + story['popularity'] / 5),
+                type: story['link'],
+                name: story['name'],
                 key: index,
+            }
+            const circleProps = {
+                cx: '50%',
+                cy: '50%',
+                r: '50%',
+                fill : "#FFFFFF"
+            };
+            const imgProps = {
                 xlinkHref: story['favicon'],
+                clipPath: "url(#" + index + "clip)",
+                height: 2 * (11 + story['popularity'] / 5),
+                width: 2 * (11 + story['popularity'] / 5),
             };
             return (
-				<image 
-					{... circleProps}
-					onMouseOut={(e) => this.handleMouseLeave(e)}
-					onMouseOver={(e) => this.handleMouseHover(e, story)}
-					onClick={this.handleMouseClick.bind(this)}
-				/> 
+                <svg {...svgProps}>
+                    <defs>
+                        <clipPath id={svgProps.key + "clip"}>
+                            <circle {... circleProps}/>
+                        </clipPath>
+                    </defs>
+                    <image
+                        {... imgProps}
+                    />
+                    onMouseOut={(e) => this.handleMouseLeave(e)}
+                    onMouseOver={(e) => this.handleMouseHover(e, story)}
+                    onClick={this.handleMouseClick.bind(this)}
+				</svg>
  			)
         };
     }
