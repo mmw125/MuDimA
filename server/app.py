@@ -40,7 +40,6 @@ def get_articles():
     return json.dumps(database_reader.get_articles(keyword=keyword))
 
 
-
 @app.route("/getNumberTopics")
 def get_number_pages():
     """Get the number of topics."""

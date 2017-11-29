@@ -57,7 +57,7 @@ def get_stories_for_topic(topic_id):
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
+        cursor.execute("SELECT name, link, image_url, group_fit_x, group_fit_y, popularity, source, favicon "
                        "FROM article WHERE topic_id=?",
                        (topic_id,))
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
@@ -122,9 +122,12 @@ def get_grouped_articles():
                 groups[id] = models.Grouping(article, uuid=id, in_database=True, has_new_articles=False)
         return list(groups.values())
 
+
 def get_articles(keyword, limit=10):
     """Get the items in the database and puts them into Article and Grouping objects."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT article_link FROM keyword JOIN article ON keyword.article_link = article.link "
-                       "WHERE keyword = ? GROUP BY article_link ORDER BY date DESC;", (keyword, limit))
-        cursor.fetchall()
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
+                       "FROM keyword JOIN article ON keyword.article_link = article.link "
+                       "WHERE keyword = ? GROUP BY article_link ORDER BY date DESC LIMIT ?;", (keyword, limit))
+        return [{"name": item[0], "link": item[1], "image": item[2], "x": item[3], "y": item[4],
+                 "popularity": item[5], "source": item[6], "favicon": item[7]} for item in cursor.fetchall()]
