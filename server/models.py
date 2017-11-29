@@ -164,6 +164,10 @@ class Article:
         """Get the category of the article."""
         return self.category
 
+    def valid(self):
+        """Do validity checks."""
+        return self.get_text().count(".") > 3
+
     def __str__(self):  # pragma: no cover
         return " ".join((self.title, self.url)).encode("utf-8")
 
