@@ -3,9 +3,11 @@
 import collections
 import newspaper
 import re
+import urlparse
 import uuid
+import validators
 
-from datetime import date
+from datetime import date, datetime
 from dateutil import parser
 
 from lxml import etree
@@ -48,6 +50,8 @@ class Article:
                 self.publishedAt = date.today()
         else:
             self.publishedAt = date.today()
+        if isinstance(self.publishedAt, datetime):
+            self.publishedAt = self.publishedAt.date()
         self.source = source if source is not None else {}
         self.urlToImage = urlToImage
         self.text = text
@@ -84,6 +88,19 @@ class Article:
     def get_url_to_image(self):
         """Get description."""
         return self.urlToImage
+
+    def get_favicon(self):
+        """Get the favicon for the article."""
+        self._init_article()
+        favicon = self.article.meta_favicon
+        if favicon != '':
+            if type(validators.url(favicon)) != validators.ValidationFailure:
+                return favicon
+            favicon = urlparse.urljoin(self.get_url(), self.article.meta_favicon)
+            if type(validators.url(favicon)) != validators.ValidationFailure:
+                return favicon
+        favicon = urlparse.urljoin(urlparse.urlparse(self.get_url()).netloc, "favicon.ico")
+        return favicon if type(validators.url(favicon)) != validators.ValidationFailure else None
 
     def _init_article(self):
         if self.article is None:

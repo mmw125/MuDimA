@@ -4,7 +4,9 @@ import classifier
 import constants
 import database_reader
 import database_writer
+import datetime
 import models
+import pytz
 import requests
 
 default_language = "en"
@@ -60,7 +62,10 @@ def get_top_headlines(sources=list(), q=list(), category="", language=default_la
         url = _build_url("top-headlines", {"sources": sources, "q": q, "category": category,
                                            "language": language, "country": country})
         response = requests.get(url)
-        return _parse_response(response, category=category)
+        replacement_time = datetime.timedelta(constants.ARTICLE_REPLACEMENT_TIME)
+        return [article for article in _parse_response(response, category=category)
+                if (datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) - replacement_time).date() <
+                article.get_published_at()]
 
 
 def get_sources(language=default_language, category="", country=""):
@@ -81,7 +86,7 @@ def update_database():
     database_writer.write_groups(grouped)
     database_writer.write_group_fits()
     if database_reader.get_number_articles_without_overall_fit() > constants.ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED:
-        print "Not enough new articles"
+        print "Not enough new articles to update all fits"
     else:
         database_writer.write_overall_fits()
     database_writer.update_topic_pictures()

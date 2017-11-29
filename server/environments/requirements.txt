@@ -3,5 +3,7 @@ flask-cors
 nltk>=3.2.1
 newspaper
 python-dateutil
+pytz
 requests
 scikit-learn[alldeps]
+validators

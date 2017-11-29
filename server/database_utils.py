@@ -2,6 +2,7 @@
 
 import sqlite3
 import os
+import traceback
 
 
 def database_name():
@@ -34,7 +35,7 @@ class DatabaseConnection:
         self.cursor.execute("""CREATE TABLE article (name TEXT, link TEXT PRIMARY KEY, image_url TEXT,
                                article_text TEXT, topic_id TEXT, date DATETIME,
                                fit_x DOUBLE, fit_y DOUBLE, group_fit_x DOUBLE, group_fit_y DOUBLE,
-                               popularity UNSIGNED INT DEFAULT 1, source TEXT,
+                               popularity UNSIGNED INT DEFAULT 1, source TEXT, favicon TEXT,
                                FOREIGN KEY(topic_id) REFERENCES topic(id) ON DELETE CASCADE)""")
         self.cursor.execute("CREATE TABLE bad_article (link TEXT PRIMARY KEY)")
         self.cursor.execute("CREATE TABLE keyword (keyword TEXT, article_link TEXT, "
@@ -45,4 +46,8 @@ class DatabaseConnection:
         return self.connection, self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            self.connection.commit()
+        except IOError:
+            traceback.print_exc()
         self.connection.close()

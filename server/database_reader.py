@@ -57,11 +57,12 @@ def get_stories_for_topic(topic_id):
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source FROM article WHERE topic_id=?",
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
+                       "FROM article WHERE topic_id=?",
                        (topic_id,))
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
-                                              "y": item[4], "popularity": item[5], "source": item[6]}
-                                             for item in cursor.fetchall()]}
+                                              "y": item[4], "popularity": item[5], "source": item[6], "favicon": item[7]
+                                              } for item in cursor.fetchall()]}
 
 
 def get_ungrouped_articles():
@@ -72,7 +73,8 @@ def get_ungrouped_articles():
         articles = []
         for item in cursor.fetchall():
             name, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text, in_database=True))
+            articles.append(models.Article(url=url, title=name, text=article_text, in_database=True,
+                                           keywords=_get_article_keywords(url, cursor)))
         return articles
 
 
