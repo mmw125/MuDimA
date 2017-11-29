@@ -25,6 +25,7 @@ export default class ScatterPlot extends React.Component {
                     </div> \
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" width="70%" class="loader_img"/> \
                     <div class="card-block"> \
+                      <h6 class="card-source">' + story['source'] + '</h6>\
                       <h4 class="card-text">'+ story['name'] +'</h4> \
                     </div> \
                 </a> \
