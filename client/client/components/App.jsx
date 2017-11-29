@@ -16,8 +16,7 @@ export default class App extends React.Component {
           <div className="container-fluid">
              <Content />
         </div>
-     </div>
-
+      </div>
     );
   }
 }

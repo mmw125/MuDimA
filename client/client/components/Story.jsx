@@ -32,7 +32,6 @@ export default class Story extends React.Component {
     return fetch('http://localhost/getStories?topic_id=' + this.props.match.params.id)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({
           isLoading: false,
           source: responseJson.articles,
