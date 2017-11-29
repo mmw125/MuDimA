@@ -9,15 +9,18 @@ import sqlite3
 
 def _write_article(article, connection, cursor):
     try:
-        cursor.execute("INSERT INTO article (name, link, image_url, date, article_text, source) "
-                       "VALUES (?, ?, ?, ?, ?, ?)",
-                       (article.get_title(), article.get_url(), article.get_url_to_image(),
-                        article.get_published_at(), article.get_text(), article.get_source().get_name()))
-        for keyword in article.get_keywords():
-            cursor.execute("INSERT INTO keyword (keyword, article_link) VALUES (?, ?);",
-                           (keyword, article.get_url()))
-    except sqlite3.IntegrityError:
-        pass
+        if article.valid():
+            cursor.execute("INSERT INTO article (name, link, image_url, date, article_text, source) "
+                           "VALUES (?, ?, ?, ?, ?, ?)",
+                           (article.get_title(), article.get_url(), article.get_url_to_image(),
+                            article.get_published_at(), article.get_text(), article.get_source().get_name()))
+            for keyword in article.get_keywords():
+                cursor.execute("INSERT INTO keyword (keyword, article_link) VALUES (?, ?);",
+                               (keyword, article.get_url()))
+        else:
+            cursor.execute("INSERT INTO bad_article (link) VALUES (?);", (article.get_url(),))
+    except sqlite3.IntegrityError as e:
+        print e.message
     article.set_in_database(True)
     connection.commit()
 

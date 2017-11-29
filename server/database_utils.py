@@ -36,6 +36,7 @@ class DatabaseConnection:
                                fit_x DOUBLE, fit_y DOUBLE, group_fit_x DOUBLE, group_fit_y DOUBLE,
                                popularity UNSIGNED INT DEFAULT 1, source TEXT,
                                FOREIGN KEY(topic_id) REFERENCES topic(id) ON DELETE CASCADE)""")
+        self.cursor.execute("CREATE TABLE bad_article (link TEXT PRIMARY KEY)")
         self.cursor.execute("CREATE TABLE keyword (keyword TEXT, article_link TEXT, "
                             "FOREIGN KEY(article_link) REFERENCES article(link) ON DELETE CASCADE)")
         self.connection.commit()

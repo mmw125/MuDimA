@@ -8,8 +8,10 @@ import models
 def get_urls():
     """Get all of the urls in articles in the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT link FROM article")
-        return set(item[0] for item in cursor.fetchall())
+        cursor.execute("SELECT link FROM article;")
+        urls = set(item[0] for item in cursor.fetchall())
+        cursor.execute("SELECT link FROM bad_article;")
+        return urls.union(item[0] for item in cursor.fetchall())
 
 
 def get_number_topics(category=None):
@@ -70,7 +72,7 @@ def get_ungrouped_articles():
         articles = []
         for item in cursor.fetchall():
             name, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text))
+            articles.append(models.Article(url=url, title=name, text=article_text, in_database=True))
         return articles
 
 
