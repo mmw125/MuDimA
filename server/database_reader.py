@@ -8,8 +8,10 @@ import models
 def get_urls():
     """Get all of the urls in articles in the database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
-        cursor.execute("SELECT link FROM article")
-        return set(item[0] for item in cursor.fetchall())
+        cursor.execute("SELECT link FROM article;")
+        urls = set(item[0] for item in cursor.fetchall())
+        cursor.execute("SELECT link FROM bad_article;")
+        return urls.union(item[0] for item in cursor.fetchall())
 
 
 def get_number_topics(category=None):
@@ -55,11 +57,12 @@ def get_stories_for_topic(topic_id):
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
         title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, popularity FROM article WHERE topic_id=?",
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
+                       "FROM article WHERE topic_id=?",
                        (topic_id,))
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
-                                              "y": item[4], "popularity": item[5], "source": item[6]}
-                                             for item in cursor.fetchall()]}
+                                              "y": item[4], "popularity": item[5], "source": item[6], "favicon": item[7]
+                                              } for item in cursor.fetchall()]}
 
 
 def get_ungrouped_articles():
@@ -70,7 +73,8 @@ def get_ungrouped_articles():
         articles = []
         for item in cursor.fetchall():
             name, url, article_text = item
-            articles.append(models.Article(url=url, title=name, text=article_text))
+            articles.append(models.Article(url=url, title=name, text=article_text, in_database=True,
+                                           keywords=_get_article_keywords(url, cursor)))
         return articles
 
 

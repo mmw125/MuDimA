@@ -13,5 +13,8 @@ gen
 # Database file
 mudima.db
 
+# OSx Stuff
+*.DS_Store
+
 # Html Coverage
 htmlcov

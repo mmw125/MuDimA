@@ -17,7 +17,8 @@ export default class ScatterPlot extends React.Component {
             }
         }
     }
-    getBoxHtml(story) {
+
+    getBoxHtml(e, story) {
         return (
             '<div class="card preview_card"> \
                 <a href="'+ story['link'] +'" style="text-decoration: none">  \
@@ -25,6 +26,7 @@ export default class ScatterPlot extends React.Component {
                     </div> \
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" width="70%" class="loader_img"/> \
                     <div class="card-block"> \
+                      <h6 class="card-source">' + story['source'] + '</h6>\
                       <h4 class="card-text">'+ story['name'] +'</h4> \
                     </div> \
                 </a> \
@@ -43,10 +45,10 @@ export default class ScatterPlot extends React.Component {
                     .attr('pointer-events', 'none')
                     .attr("class", "tooltip")
                     .style("opacity", 1)
-                    .html(this.getBoxHtml(story))
+                    .html(this.getBoxHtml(e, story))
                     .style("position", 'absolute')
-                    .style("left", ((d.x - 100) + "px"))
-                    .style("top", (d.y +"px"));
+                    .style("left", ((d.x) - 150 + "px"))
+                    .style("top", (d.y + "px"));
     }
 
     handleMouseOut(e) {
@@ -55,7 +57,7 @@ export default class ScatterPlot extends React.Component {
     }
 
     handleMouseClick(e) {
-        window.open(e.target.getAttribute('href'), '_blank');
+        window.open(e.target.getAttribute('type'), '_blank');
         fetch('http://localhost/userClick', {
             method: 'POST',
             headers: {
@@ -63,7 +65,7 @@ export default class ScatterPlot extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                url: e.target.getAttribute('href'),
+                url: e.target.getAttribute('type'),
             })
         });
     }
@@ -85,24 +87,51 @@ export default class ScatterPlot extends React.Component {
     renderCircles() {
         return (story, index) => {
             const coords = [story['x'], story['y']]
+            const svgProps = {
+                x: this.xScale()(coords[0]),
+                y: this.yScale()(coords[1]),
+                height: 2 * (11 + story['popularity'] / 5),
+                width: 2 * (11 + story['popularity'] / 5),
+                key: index,
+            }
             const circleProps = {
-                href: story['link'],
-                name: story['name'],
+                cx: '50%',
+                cy: '50%',
+                r: '50%',
+                fill : "#FFFFFF"
+            };
+            const imgProps = {
                 cx: this.xScale()(coords[0]),
                 cy: this.yScale()(coords[1]),
-                r: 8 + story['popularity'] / 5,
-                key: index
+                xlinkHref: story['favicon'],
+                clipPath: "url(#" + index + "clip)",
+                height: 2 * (11 + story['popularity'] / 5),
+                width: 2 * (11 + story['popularity'] / 5),
+                type: story['link'],
+                name: story['name'],
             };
-            return <circle href={circleProps.link} onMouseOut={(e) => this.handleMouseOut(e)}
-                           onMouseOver={(e) => this.handleMouseHover(e, story)}
-                           onClick={this.handleMouseClick.bind(this)} {...circleProps} />;
+            return (
+                <svg {...svgProps}>
+                    <defs>
+                        <clipPath id={svgProps.key + "clip"}>
+                            <circle {... circleProps}/>
+                        </clipPath>
+                    </defs>
+                    <image
+                        {... imgProps}
+                        onMouseOut={(e) => this.handleMouseOut(e)}
+                        onMouseOver={(e) => this.handleMouseHover(e, story)}
+                        onClick={this.handleMouseClick.bind(this)}
+                    />
+				</svg>
+ 			)
         };
     }
 
     render() {
         return (
             <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
-                <g>{this.props.data.map(this.renderCircles(this.props))}</g>
+                {this.props.data.map(this.renderCircles(this.props))}
             </svg>
         );
     }
