@@ -16,5 +16,8 @@ mudima.db
 # OSx Stuff
 *.DS_Store
 
+# Npm debug log
+client/npm-debug.log
+
 # Html Coverage
 htmlcov
