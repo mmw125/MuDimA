@@ -108,7 +108,7 @@ export default class ScatterPlot extends React.Component {
                 height: 2 * (11 + story['popularity'] / 5),
                 width: 2 * (11 + story['popularity'] / 5),
                 type: story['link'],
-                name: story['name'],
+                name: story['name'] !== null ? story['name'] : new URL(story['link']).origin + "/favicon.ico",
             };
             return (
                 <svg {...svgProps}>
