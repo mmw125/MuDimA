@@ -56,9 +56,9 @@ def get_stories_for_topic(topic_id):
     """Get all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
-        item = cursor.fetchone()
-        if item is not None:
-            title = item[0]
+        db_item = cursor.fetchone()
+        if db_item is not None:
+            title = db_item[0]
             cursor.execute("SELECT name, link, image_url, group_fit_x, group_fit_y, popularity, source, favicon "
                            "FROM article WHERE topic_id=?",
                            (topic_id,))
