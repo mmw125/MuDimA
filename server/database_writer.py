@@ -10,6 +10,11 @@ import sqlite3
 def _print_status(name, i, out_of):
     if i is 0:
         print "Writing", out_of, name
+    elif out_of > 150:
+        if i % 50 == 0:
+            print i
+    elif i % 20 == 0:
+        print i
     print ".",
     if i == out_of - 1:
         print "done"
