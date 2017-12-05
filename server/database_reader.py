@@ -56,13 +56,18 @@ def get_stories_for_topic(topic_id):
     """Get all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
-        title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, group_fit_x, group_fit_y, popularity, source, favicon "
-                       "FROM article WHERE topic_id=?",
-                       (topic_id,))
+        item = cursor.fetchone()
+        if item is not None:
+            title = item[0]
+            cursor.execute("SELECT name, link, image_url, group_fit_x, group_fit_y, popularity, source, favicon "
+                           "FROM article WHERE topic_id=?",
+                           (topic_id,))
+            items = cursor.fetchall()
+        else:
+            title, items = None, []
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
                                               "y": item[4], "popularity": item[5], "source": item[6], "favicon": item[7]
-                                              } for item in cursor.fetchall()]}
+                                              } for item in items]}
 
 
 def get_ungrouped_articles():

@@ -70,6 +70,8 @@ def get_top_keywords():
 def get_stories_for_topic():
     """Get the stories for a topic id."""
     topic_id = request.args.get("topic_id")
+    stories = database_reader.get_stories_for_topic(topic_id)
+    stories["title"] = stories.get("title", constants.NO_SUCH_TOPIC)
     return json.dumps(database_reader.get_stories_for_topic(topic_id))
 
 

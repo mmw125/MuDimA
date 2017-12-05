@@ -17,3 +17,6 @@ ARTICLES_NEEDED_BEFORE_ALL_FIT_UPDATED = 200
 
 # Number of keywords to return by default.
 DEFAULT_NUM_KEYWORDS = 10
+
+# When the user requests a grouping that does not exist in the database.
+NO_SUCH_TOPIC = "There is no grouping with that id"
