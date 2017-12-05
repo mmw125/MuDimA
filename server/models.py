@@ -108,7 +108,7 @@ class Article:
             self.article.download()
             try:
                 self.article.parse()
-            except etree.XMLSyntaxError:
+            except (etree.XMLSyntaxError, TypeError):
                 pass
 
     def get_text(self):

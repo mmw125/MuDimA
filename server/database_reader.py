@@ -56,13 +56,18 @@ def get_stories_for_topic(topic_id):
     """Get all of the stories for the topic with the given topic id. Returns empty dict if topic not in database."""
     with database_utils.DatabaseConnection() as (connection, cursor):
         cursor.execute("SELECT name FROM topic WHERE id=?", (topic_id,))
-        title = cursor.fetchone()[0]
-        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
-                       "FROM article WHERE topic_id=?",
-                       (topic_id,))
+        db_item = cursor.fetchone()
+        if db_item is not None:
+            title = db_item[0]
+            cursor.execute("SELECT name, link, image_url, group_fit_x, group_fit_y, popularity, source, favicon "
+                           "FROM article WHERE topic_id=?",
+                           (topic_id,))
+            items = cursor.fetchall()
+        else:
+            title, items = None, []
         return {"title": title, "articles": [{"name": item[0], "link": item[1], "image": item[2], "x": item[3],
                                               "y": item[4], "popularity": item[5], "source": item[6], "favicon": item[7]
-                                              } for item in cursor.fetchall()]}
+                                              } for item in items]}
 
 
 def get_ungrouped_articles():
@@ -121,3 +126,22 @@ def get_grouped_articles():
             else:
                 groups[id] = models.Grouping(article, uuid=id, in_database=True, has_new_articles=False)
         return list(groups.values())
+
+
+def get_articles(keyword, page=0, limit=10, order_by=None, descending=True):
+    """Get the items in the database and puts them into Article and Grouping objects."""
+    order_by = "date" if order_by is None else order_by
+    with database_utils.DatabaseConnection() as (connection, cursor):
+        cursor.execute("SELECT name, link, image_url, fit_x, fit_y, popularity, source, favicon "
+                       "FROM keyword JOIN article ON keyword.article_link = article.link "
+                       "WHERE keyword = ? OR ? GROUP BY article_link ORDER BY ? DESC;",
+                       (keyword, keyword is None, order_by))
+        items = [item for item in cursor.fetchall()]
+        num_items = len(items)
+        if not descending:
+            items.reverse()
+        start = limit * page
+        items = items[start:start + limit]
+        return {"num": num_items, "articles": [{
+            "name": item[0], "link": item[1], "image": item[2], "x": item[3], "y": item[4],
+            "popularity": item[5], "source": item[6], "favicon": item[7]} for item in items]}

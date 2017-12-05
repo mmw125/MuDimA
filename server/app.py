@@ -33,6 +33,24 @@ def get_topics():
     return json.dumps(database_reader.get_topics(page_number=page_number, category=category))
 
 
+@app.route("/articles")
+def get_articles():
+    """Get articles with some filter."""
+    keyword = request.args.get("kw", None)
+    try:
+        page = int(request.args.get("p", 0))
+    except ValueError:
+        page = 0
+    try:
+        limit = int(request.args.get("limit", constants.ARTICLES_PER_PAGE))
+    except ValueError:
+        limit = constants.ARTICLES_PER_PAGE
+    order_by = request.args.get("limit")
+    descending = bool(request.args.get("descending"))
+    return json.dumps(database_reader.get_articles(keyword=keyword, page=page, limit=limit,
+                                                   order_by=order_by, descending=descending))
+
+
 @app.route("/getNumberTopics")
 def get_number_pages():
     """Get the number of topics."""
@@ -44,13 +62,16 @@ def get_number_pages():
 @app.route("/keywords")
 def get_top_keywords():
     """Get the most used keywords in the database."""
-    return json.dumps(database_reader.get_top_keywords(int(request.args.get("n", constants.DEFAULT_NUM_KEYWORDS))))
+    num_keywords = int(request.args.get("n", constants.DEFAULT_NUM_KEYWORDS))
+    return json.dumps(database_reader.get_top_keywords(num_keywords))
 
 
 @app.route("/getStories")
 def get_stories_for_topic():
     """Get the stories for a topic id."""
     topic_id = request.args.get("topic_id")
+    stories = database_reader.get_stories_for_topic(topic_id)
+    stories["title"] = stories.get("title", constants.NO_SUCH_TOPIC)
     return json.dumps(database_reader.get_stories_for_topic(topic_id))
 
 
