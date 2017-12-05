@@ -1,6 +1,6 @@
 import React from 'react';
 import ScatterPlot from './ScatterPlot.jsx';
-import stories from '../data/mock-stories.js'
+import Articles from './Articles.jsx';
 
 const styles = {
   width   : 1080,
@@ -34,7 +34,6 @@ export default class Story extends React.Component {
       .then((responseJson) => {
         this.setState({
           isLoading: false,
-          source: responseJson.articles,
           data: responseJson.articles,
           title: responseJson.title
         })})
@@ -53,10 +52,8 @@ export default class Story extends React.Component {
       <div className="row">
         <h1>{this.state.title}</h1>
         <ScatterPlot {...this.state} {...styles} />
+        <Articles articles={this.state.data} />
       </div>
     );
   }
-  // <ul>
-  // {this.state.source.map(storyData => <li><a href={storyData[1]}>{storyData[0]}</a></li>)}
-  // </ul>
 }
