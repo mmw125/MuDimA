@@ -1,7 +1,7 @@
 import React from 'react';
 import ScatterPlot from './ScatterPlot.jsx';
 import stories from '../data/mock-stories.js'
-
+import ScatterPlotR from './ScatterPlotRecharts.jsx';
 const styles = {
   width   : 1080,
   height  : 1000,
@@ -51,8 +51,8 @@ export default class Story extends React.Component {
     }
     return (
       <div className="row">
-        <h1>{this.state.title}</h1>
-        <ScatterPlot {...this.state} {...styles} />
+        <h1 style={{marginTop: '1em'}}>{this.state.title}</h1>
+        <ScatterPlotR data={this.state.data}/>
       </div>
     );
   }

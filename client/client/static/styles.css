@@ -66,3 +66,57 @@ grey: #CCCCCC
   left: 2rem;
   z-index: 1;
 }
+
+
+.container-fluid{
+  max-width: 1920px;
+}
+img.card-img-top {
+  width: 100%;
+}
+
+.no-pad{
+  padding:0;
+  margin:0;
+}
+/*Demo only*/
+.hover-card .top {
+  transition: .2s;
+  bottom: 0;
+  background: rgba(66, 66, 66, 0.56);
+  padding: 0.5em;
+  position: absolute;
+  left: 0;
+  text-align: left;
+  color: white;
+  font-size: 25px;
+  width: 100%;
+  max-height: 100%;
+  line-height: 1.4em;
+}
+
+.card:hover .top{
+  opacity: 1;
+  background: #252525;
+}
+.card:hover .read-more .fa{
+  color:white;
+}
+.hover-card h2,.hover-card,.hover-card h4 {
+  margin: 0;
+}
+.storyCard {
+  margin-bottom: 25px;
+}
+.recharts-scatter .recharts-scatter-symbol .recharts-symbols:hover {
+   fill: red;
+}
+.recharts-symbols {
+  width: 10px;
+}
+.num-articles {
+  font-size: 15px;
+}
+.storyCard:nth-child(1),.storyCard:nth-child(2) {
+    margin-top: 25px;
+}

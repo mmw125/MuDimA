@@ -17,6 +17,7 @@ export default class ScatterPlot extends React.Component {
             }
         }
     }
+
     getBoxHtml(e, story) {
         return (
             '<div class="card preview_card"> \
@@ -50,7 +51,7 @@ export default class ScatterPlot extends React.Component {
                     .style("top", (d.y + "px"));
     }
 
-    handleMouseLeave(e) {
+    handleMouseOut(e) {
         d3.select('div.tooltip').remove();
         d3.select(e.target).attr({fill: "black"});
     }
@@ -118,7 +119,7 @@ export default class ScatterPlot extends React.Component {
                     </defs>
                     <image
                         {... imgProps}
-                        onMouseOut={(e) => this.handleMouseLeave(e)}
+                        onMouseOut={(e) => this.handleMouseOut(e)}
                         onMouseOver={(e) => this.handleMouseHover(e, story)}
                         onClick={this.handleMouseClick.bind(this)}
                     />
