@@ -1,137 +1,80 @@
-// unfinished/src/components/scatter-plot.jsx
-import React from 'react';
+import React, { Component } from 'react';
+import {ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Dot} from 'recharts';
+const scatter_styles = {
+    width: 1200,
+    height: 1000
+}
+const CustomizedShape = (props) => {
+    let {cx, cy, favicon, popularity, source, payload} = props;
+    const height = 2 * (11 + popularity / 5);
+    const width = 2 * (11 + popularity / 5);
+    // Adjust cx and cy to position the lines in the center
+    cx = cx - (width/2);
+    cy = cy - (height/2);
+    favicon = favicon ? favicon : "https://upload.wikimedia.org/wikipedia/commons/3/3f/Article_icon_cropped.svg";
+    return (
+        <g>
+          <g transform={`translate(${cx},${cy})`}>
+            <image href={favicon} height={height} width={width}/>
+          </g>
+        </g>
+    );
+};
+const xScale = () => {
+    return d3.scale.pow()
+        .domain([-1, 1])
+        .range([20, 1200-20])
+        
+};
 
-// Returns the largest X coordinate from the data set
-const xMax = (data) => d3.max(data, (d) => d[0]);
-
-// Returns the highest Y coordinate from the data set
-const yMax = (data) => d3.max(data, (d) => d[1]);
-
-export default class ScatterPlot extends React.Component {
+const yScale = () => {
+    return d3.scale.pow()
+        .domain([-1, 1])
+        .range([1000 - 20, 20])
+        
+};
+export default class ScatterPlotRecharts extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            scales: {
-                xScale: this.props.data[0],
-                yScale: this.props.data[1]
-            }
+    }
+    getArticleTooltip(props, b) {
+        const {payload} = props;
+        if (payload.length) {
+            let story = payload[0]['payload'];
+            let image_div = (
+                <div>
+                    <div style={{background: 'url(' + story['image']+')', backgroundSize: 'cover', backgroundPosition: 'center center', width: '100%', height: '160px', position: 'relative', zIndex: '2'}}>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" width="70%" className="loader_img"/>
+                </div>
+            );
+            image_div = story['image'] ? image_div : null;
+            return (
+                <div className="card preview_card"> 
+                    <a href={story['link']} style={{textDecoration: 'none'}}>
+                        {image_div}
+                        <div className="card-block">
+                            <h6 className="card-text">{story['source']}</h6>
+                            <h6 className="card-text">{story['name']}</h6>
+                        </div>
+                    </a>
+                </div>
+            );
         }
     }
-    getBoxHtml(e, story) {
-        return (
-            '<div class="card preview_card"> \
-                <a href="'+ story['link'] +'" style="text-decoration: none">  \
-                    <div style="background: url('+ story['image'] +'); background-size: cover; background-position: center center; width: 100%; height: 160px; position: relative; z-index: 2"> \
-                    </div> \
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" width="70%" class="loader_img"/> \
-                    <div class="card-block"> \
-                      <h6 class="card-source">' + story['source'] + '</h6>\
-                      <h4 class="card-text">'+ story['name'] +'</h4> \
-                    </div> \
-                </a> \
-            </div>'
-        );
-    }
-    handleMouseHover(e, story) {
-        const d = {
-            name: e.target.getAttribute('name'),
-            link: e.target.getAttribute('link'),
-            x: e.target.getAttribute('cx'),
-            y: e.target.getAttribute('cy')
-        };
-        d3.select(e.target).attr({fill: "orange"});
-        var div = d3.select("body").append("div")
-                    .attr('pointer-events', 'none')
-                    .attr("class", "tooltip")
-                    .style("opacity", 1)
-                    .html(this.getBoxHtml(e, story))
-                    .style("position", 'absolute')
-                    .style("left", ((d.x) - 150 + "px"))
-                    .style("top", (d.y + "px"));
-    }
 
-    handleMouseLeave(e) {
-        d3.select('div.tooltip').remove();
-        d3.select(e.target).attr({fill: "black"});
-    }
-
-    handleMouseClick(e) {
-        window.open(e.target.getAttribute('type'), '_blank');
-        fetch('http://localhost/userClick', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                url: e.target.getAttribute('type'),
-            })
-        });
-    }
-
-    xScale() {
-        return d3.scale.pow()
-            .domain([-1, 1])
-            .range([this.props.padding, this.props.width - this.props.padding])
-            .exponent(2);
-    };
-
-    yScale() {
-        return d3.scale.pow()
-            .domain([-1, 1])
-            .range([this.props.height - this.props.padding, this.props.padding])
-            .exponent(2);
-    };
-
-    renderCircles() {
-        return (story, index) => {
-            const coords = [story['x'], story['y']]
-            const svgProps = {
-                x: this.xScale()(coords[0]),
-                y: this.yScale()(coords[1]),
-                height: 2 * (11 + story['popularity'] / 5),
-                width: 2 * (11 + story['popularity'] / 5),
-                key: index,
-            }
-            const circleProps = {
-                cx: '50%',
-                cy: '50%',
-                r: '50%',
-                fill : "#FFFFFF"
-            };
-            const imgProps = {
-                cx: this.xScale()(coords[0]),
-                cy: this.yScale()(coords[1]),
-                xlinkHref: story['favicon'],
-                clipPath: "url(#" + index + "clip)",
-                height: 2 * (11 + story['popularity'] / 5),
-                width: 2 * (11 + story['popularity'] / 5),
-                type: story['link'],
-                name: story['name'] !== null ? story['name'] : new URL(story['link']).origin + "/favicon.ico",
-            };
-            return (
-                <svg {...svgProps}>
-                    <defs>
-                        <clipPath id={svgProps.key + "clip"}>
-                            <circle {... circleProps}/>
-                        </clipPath>
-                    </defs>
-                    <image
-                        {... imgProps}
-                        onMouseOut={(e) => this.handleMouseLeave(e)}
-                        onMouseOver={(e) => this.handleMouseHover(e, story)}
-                        onClick={this.handleMouseClick.bind(this)}
-                    />
-				</svg>
- 			)
-        };
+    onArticleClicked(e) {
+        window.open(e.link, '_blank');
     }
 
     render() {
         return (
-            <svg ref="scatterPlot" width={this.props.width} height={this.props.height}>
-                {this.props.data.map(this.renderCircles(this.props))}
-            </svg>
+            <ScatterChart width={scatter_styles.width} height={scatter_styles.height} margin={{top: 40, right: 20, bottom: 20, left: 20}}>
+                <XAxis dataKey={'x'}  hide/>
+                <YAxis dataKey={'y'}  hide/>
+                <Tooltip  cursor={{strokeDasharray: '3 3'}} content={(a,b) => this.getArticleTooltip(a,b)}/>
+                <Scatter isAnimationActive={false} data={this.props.data} fill='#8884d8' onClick={(e) => this.onArticleClicked(e)} shape={<CustomizedShape />}/>
+            </ScatterChart>
         );
     }
 }
