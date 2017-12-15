@@ -12,6 +12,7 @@ import requests
 default_language = "en"
 news_api_url = "http://beta.newsapi.org/v2/"
 news_api_key = "25a1ccdea267479c95010aa442e376e5"
+politifact_api_url = "http://www.politifact.com/api/statements/truth-o-meter/json/?n="
 categories = ("general", "business", "entertainment", "gaming", "health-and-medical",
               "music", "politics", "science-and-nature", "sport", "technology")
 
@@ -90,3 +91,8 @@ def update_database():
     else:
         database_writer.write_overall_fits()
     database_writer.update_topic_pictures()
+
+def get_truth(truth_count = 10):
+    """Get the verified statements from politifact api"""
+    response = requests.get(politifact_api_url + str(truth_count))
+    return response
