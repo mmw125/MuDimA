@@ -83,12 +83,14 @@ def user_click():
         database_writer.mark_item_as_clicked(data["url"])
     return ""
 
+
 @app.route("/getTruth")
 def get_truth():
-    """Get Truth-O-meter verified statements from Politifact API"""
+    """Get Truth-O-meter verified statements from Politifact API."""
     truth_count = int(request.args.get("n", 10))
-    response = news_fetcher.get_truth(truth_count);
+    response = news_fetcher.get_truth(truth_count)
     return json.dumps(response.json())
+
 
 if __name__ == "__main__":  # pragma: no cover
     if not database_reader.get_urls():

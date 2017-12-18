@@ -92,7 +92,8 @@ def update_database():
         database_writer.write_overall_fits()
     database_writer.update_topic_pictures()
 
-def get_truth(truth_count = 10):
-    """Get the verified statements from politifact api"""
+
+def get_truth(truth_count=10):
+    """Get the verified statements from politifact api."""
     response = requests.get(politifact_api_url + str(truth_count))
     return response
