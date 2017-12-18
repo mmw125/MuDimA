@@ -6,7 +6,7 @@ export default class Contact extends React.Component {
       <div className="row">
       <div className="col-md-12">
         <h1>Contact</h1>
-        <p></p>
+        <p> Developers: Abdulaziz Alayadi, Andrew Marmon, Jacob Teves, Mark Wiggans, Mason Shuler</p>
       </div>
       </div>
     );

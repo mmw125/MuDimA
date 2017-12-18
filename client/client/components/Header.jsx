@@ -7,14 +7,16 @@ export default class Header extends React.Component {
         <a className="navbar-brand" href="#">MuDimA</a>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
+           <li className="nav-item">
+              <a className="nav-link" href="#/fact-check">Fact Check</a>
+            </li>
+		   <li className="nav-item">
               <a className="nav-link" href="#/about">About</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#/contact">Contact</a>
-            </li>
+            </li>            
           </ul>
-
         </div>
       </nav>);
   }

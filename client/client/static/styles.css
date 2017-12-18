@@ -66,3 +66,142 @@ grey: #CCCCCC
   left: 2rem;
   z-index: 1;
 }
+.recharts-scatter .recharts-scatter-symbol .recharts-symbols:hover {
+   fill: red;
+}
+.storyTitle {
+  margin: 1em auto 1em auto;
+}
+
+img.card-img-top {
+  width: 100%;
+}
+
+.no-pad{
+  padding:0;
+  margin:0;
+}
+/*Demo only*/
+.hover-card .top {
+  transition: .2s;
+  bottom: 0;
+  background: rgba(66, 66, 66, 0.56);
+  padding: 0.5em;
+  position: absolute;
+  left: 0;
+  text-align: left;
+  color: white;
+  font-size: 25px;
+  width: 100%;
+  max-height: 100%;
+  line-height: 1.4em;
+}
+
+.card:hover .top{
+  opacity: 1;
+  background: #252525;
+}
+.card:hover .read-more .fa{
+  color:white;
+}
+.hover-card h2,.hover-card,.hover-card h4 {
+  margin: 0;
+}
+.storyCard {
+  margin-bottom: 25px;
+}
+.num-articles {
+  font-size: 15px;
+}
+.storyCard:nth-child(1),.storyCard:nth-child(2) {
+    margin-top: 25px;
+}
+
+.wrapper {
+  position: relative;
+  height: 125px;
+  padding: 10px;
+  margin: 50px auto;
+  border-radius: 5px;
+  /* VIA CSS MATIC https://goo.gl/cIbnS */
+  -webkit-box-shadow: 0px 0px 7px -1px rgba(0, 0, 0, 0.15)
+  -moz-box-shadow: 0px 0px 7px -1px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 7px -1px rgba(0, 0, 0, 0.15);
+}
+
+.truth-img {
+  float: left;
+  height: 105px;
+  width: 105px;
+}
+
+.truth-img img {
+  border-radius: 5px;
+  margin: auto;
+}
+.truth-img-right img {
+  float: right;
+  border-radius: 5px;
+}
+.truth-info {
+  float: left;
+  height: 100px;
+  width: 80%;
+  border-radius: 0 7px 10px 7px;
+  background-color: #ffffff;
+}
+
+.truth-text {
+  height: 100px;
+  position: relative;
+}
+
+.truth-text h3 {
+  margin: 0 0 0 15px;
+  padding-top: 10px;
+  color: #474747;
+  font-weight: 400;
+  letter-spacing: 1px;
+  font-size: 20px;
+}
+.truth-text span.subtext {
+  position: absolute;
+  left: 20px;
+  bottom: -5px;
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+}
+.subsubtext {
+  font-size: 14px;
+  color: #8a8a8a;
+}
+.truth-text span.details {
+  margin: 0 0 47px 38px;
+  display: block;
+}
+
+.truth-loading {
+  height: 165px;
+  text-align: center;
+  padding-top: 1em;
+}
+
+.home-loading {
+  text-align: center;
+  margin-top: 1em
+}
+.powered_by {
+  color: rgb(187, 187, 187);
+  font-size: 15px;
+  margin-top: 10px;
+  float: right;
+  font-weight: 400;
+}
+.fact-checks {
+  position: relative;
+  top: 1.1em;
+  margin-bottom: 1em;
+  font-size: 25px;
+  font-weight: bold;
+}
